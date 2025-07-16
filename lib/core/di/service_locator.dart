@@ -1,66 +1,68 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:dio/dio.dart';
-import 'package:lh_notificacion_app/core/network/dio_client.dart';
-import 'package:lh_notificacion_app/core/storage/secure_storage_repository.dart';
-import 'package:lh_notificacion_app/core/storage/shared_preferences_repositoy.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/arranque_remote_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/avatar_local_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/cuenta_corriente_remote_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/empresa_remote_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/notificacion_boleta_remote_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/notificacion_pago_remote_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/periodo_remote_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/datasources/produccion_consumo_remote_data_source.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/arranque_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/avatar_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/cuenta_corriente_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/empresa_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/notificacion_boleta_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/notificacion_pago_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/periodo_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/data/repositories/produccion_consumo_repository_impl.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/arranque_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/auth_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/avatar_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/cuenta_corriente_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/empresa_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/notificacion_boleta_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/notificacion_pago_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/periodo_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/repositories/produccion_consumo_repository.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/arranque/get_arranque_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/avatar/get_avatar_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/avatar/init_avatar_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/avatar/save_avatar_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/cuenta_corriente/get_cuenta_corriente_by_periodo_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/cuenta_corriente/get_cuenta_corriente_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/empresa/get_empresa_cached_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/empresa/get_empresa_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/login/check_if_user_is_logged_in_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/login/get_cached_user_credentials_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/login/login_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/login/logout_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/notificacion_boleta/get_notificacion_boleta_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/notificacion_boleta/get_pdf_boleta_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/notificacion_pago/get_pago_pdf_boleta_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/notificacion_pago/get_pago_pdf_tiket_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/periodo/get_periodo_and_proceso_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/periodo/get_periodo_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/produccion_consumo/get_produccion_consumo_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/domain/usecases/socio/get_socio_use_case.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/Login_form/login_form_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/auth/auth_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/avatar/avatar_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/boleta/boleta_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/consumo/consumo_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/home/home_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/pago/pago_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/password_form/password_form_bloc.dart';
-import 'package:lh_notificacion_app/features/auth/presentation/blocs/simon/simon_bloc.dart';
+/*
+import 'package:reservas_app/features/auth/data/datasources/arranque_remote_data_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/avatar_local_data_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/cuenta_corriente_remote_data_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/empresa_remote_data_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/notificacion_boleta_remote_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/notificacion_pago_remote_data_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/periodo_remote_data_source.dart';
+import 'package:reservas_app/features/auth/data/datasources/produccion_consumo_remote_data_source.dart';
+import 'package:reservas_app/features/auth/data/repositories/arranque_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/avatar_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/cuenta_corriente_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/empresa_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/notificacion_boleta_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/notificacion_pago_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/periodo_repository_impl.dart';
+import 'package:reservas_app/features/auth/data/repositories/produccion_consumo_repository_impl.dart';
+import 'package:reservas_app/features/auth/domain/repositories/arranque_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/avatar_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/cuenta_corriente_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/empresa_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/notificacion_boleta_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/notificacion_pago_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/periodo_repository.dart';
+import 'package:reservas_app/features/auth/domain/repositories/produccion_consumo_repository.dart';
+import 'package:reservas_app/features/auth/domain/usecases/arranque/get_arranque_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/avatar/get_avatar_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/avatar/init_avatar_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/avatar/save_avatar_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/cuenta_corriente/get_cuenta_corriente_by_periodo_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/cuenta_corriente/get_cuenta_corriente_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/empresa/get_empresa_cached_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/empresa/get_empresa_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/login/check_if_user_is_logged_in_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/login/get_cached_user_credentials_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/login/login_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/login/logout_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/notificacion_boleta/get_notificacion_boleta_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/notificacion_boleta/get_pdf_boleta_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/notificacion_pago/get_pago_pdf_boleta_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/notificacion_pago/get_pago_pdf_tiket_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/periodo/get_periodo_and_proceso_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/periodo/get_periodo_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/produccion_consumo/get_produccion_consumo_use_case.dart';
+import 'package:reservas_app/features/auth/domain/usecases/socio/get_socio_use_case.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/Login_form/login_form_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/auth/auth_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/avatar/avatar_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/boleta/boleta_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/consumo/consumo_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/home/home_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/pago/pago_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/password_form/password_form_bloc.dart';
+import 'package:reservas_app/features/auth/presentation/blocs/simon/simon_bloc.dart';
+*/
 import 'package:logger/logger.dart';
+import 'package:reservas_app/core/network/dio_client.dart';
+import 'package:reservas_app/core/storage/secure_storage_repository.dart';
+import 'package:reservas_app/core/storage/shared_preferences_repository.dart';
 
 final di = GetIt.instance;
 
@@ -85,6 +87,7 @@ Future<void> init() async {
   );
 
   //Datasource
+  /*
   di.registerLazySingleton<EmpresaRemoteDataSource>(
     () => EmpresaRemoteDataSourceImpl(dioClient: di()),
   );
@@ -265,4 +268,5 @@ Future<void> init() async {
   );
   di.registerFactory<HomeBloc>(() => HomeBloc());
   di.registerFactory<SimonBloc>(() => SimonBloc(getPeriodoUseCase: di()));
+  */
 }

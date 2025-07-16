@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:lh_notificacion_app/core/storage/secure_storage_repository.dart';
 import 'package:logger/web.dart';
+import 'package:reservas_app/core/storage/secure_storage_repository.dart';
 
 class DioClient {
   final Dio dio;
