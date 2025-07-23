@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:logger/web.dart';
-import 'package:reservas_app/core/storage/secure_storage_repository.dart';
+import 'package:logger/logger.dart';
+import 'package:reservas_app/core/constants/app_constants.dart';
+import 'package:reservas_app/core/storage/secure_storage.dart';
 
 class DioClient {
   final Dio dio;
@@ -14,9 +15,9 @@ class DioClient {
   }) {
     // Configuración base de Dio
     dio.options = BaseOptions(
-      baseUrl: 'https://sistemaslh.cl/apr/api/',
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 10),
+      baseUrl: AppConstants.baseUrl,
+      connectTimeout: AppConstants.connectTimeout,
+      receiveTimeout: AppConstants.receiveTimeout,
       responseType: ResponseType.json,
     );
 
@@ -34,7 +35,8 @@ class DioClient {
             'User-Agent': 'Mozilla/5.0',
             if (token != null && token.isNotEmpty)
               'Authorization': 'Bearer $token',
-            if (dbname != null && dbname.isNotEmpty) 'dbname': dbname,
+            if (dbname != null && dbname.isNotEmpty) 
+              'Dbname': dbname,
           });
           logger.i('Request: ${options.method} ${options.path}');
           return handler.next(options);
@@ -50,4 +52,5 @@ class DioClient {
       ),
     );
   }
+
 }

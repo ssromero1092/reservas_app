@@ -1,84 +1,43 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-abstract class SharedPreferencesRepository {
-  Future<void> init();
+class SecureStorageRepository {
+  final FlutterSecureStorage _storage;
 
-  Future<bool> setInt(String key, int value);
-  int getInt(String key, {int defaultValue = 0});
+  SecureStorageRepository(this._storage);
 
-  Future<bool> setString(String key, String value);
-  String getString(String key, {String defaultValue = ''});
-
-  Future<bool> setBool(String key, bool value);
-  bool getBool(String key, {bool defaultValue = false});
-
-  Future<bool> remove(String key);
-  Future<bool> clear();
-}
-
-class SharedPreferencesRepositoryImpl implements SharedPreferencesRepository {
-  SharedPreferences? _prefs;
-  bool _isInitialized = false;
-
-  @override
-  Future<void> init() async {
-    if (!_isInitialized) {
-      _prefs = await SharedPreferences.getInstance();
-      _isInitialized = true;
-    }
+  Future<void> saveToken(String token) async {
+    await _storage.write(key: 'token', value: token);
   }
 
-  void _checkInitialization() {
-    if (!_isInitialized || _prefs == null) {
-      throw Exception('SharedPreferences not initialized. Call init() first.');
-    }
+  Future<String?> getToken() async {
+    return await _storage.read(key: 'token');
   }
 
-  @override
-  Future<bool> setInt(String key, int value) async {
-    _checkInitialization();
-    return await _prefs!.setInt(key, value);
+  Future<void> deleteToken() async {
+    await _storage.delete(key: 'token');
   }
 
-  @override
-  int getInt(String key, {int defaultValue = 0}) {
-    _checkInitialization();
-    return _prefs!.getInt(key) ?? defaultValue;
+  Future<void> saveDbname(String dbname) async {
+    await _storage.write(key: 'dbname', value: dbname);
   }
 
-  @override
-  Future<bool> setString(String key, String value) async {
-    _checkInitialization();
-    return await _prefs!.setString(key, value);
+  Future<String?> getDbname() async {
+    return await _storage.read(key: 'dbname');
   }
 
-  @override
-  String getString(String key, {String defaultValue = ''}) {
-    _checkInitialization();
-    return _prefs!.getString(key) ?? defaultValue;
+  Future<void> deleteDbname() async {
+    await _storage.delete(key: 'dbname');
   }
 
-  @override
-  Future<bool> setBool(String key, bool value) async {
-    _checkInitialization();
-    return await _prefs!.setBool(key, value);
+  Future<void> savePassword(String dbname) async {
+    await _storage.write(key: 'password', value: dbname);
   }
 
-  @override
-  bool getBool(String key, {bool defaultValue = false}) {
-    _checkInitialization();
-    return _prefs!.getBool(key) ?? defaultValue;
+  Future<String?> getPassword() async {
+    return await _storage.read(key: 'password');
   }
 
-  @override
-  Future<bool> remove(String key) async {
-    _checkInitialization();
-    return await _prefs!.remove(key);
-  }
-
-  @override
-  Future<bool> clear() async {
-    _checkInitialization();
-    return await _prefs!.clear();
+  Future<void> deletePassword() async {
+    await _storage.delete(key: 'password');
   }
 }
