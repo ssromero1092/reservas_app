@@ -32,3 +32,7 @@ class LoginSubmitted extends LoginEvent {
 class LoginReset extends LoginEvent {
   const LoginReset();
 }
+
+class reservas extends LoginEvent {
+  const reservas();
+}

@@ -5,6 +5,7 @@ import 'package:reservas_app/core/di/service_locator.dart';
 import 'package:reservas_app/core/routes/app_routter.dart';
 import 'package:reservas_app/core/theme/app_theme.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/reservas/reservas_bloc.dart';
 import 'package:toastification/toastification.dart';
 
 void main() async {
@@ -25,6 +26,9 @@ class MainApp extends StatelessWidget {
       providers: [
         BlocProvider<LoginBloc>(
           create: (context) => GetIt.instance.get<LoginBloc>(),
+        ),
+        BlocProvider<ReservasBloc>(
+          create: (context) => GetIt.instance.get<ReservasBloc>(),
         ),
       ],
       child: ToastificationWrapper(

@@ -2,23 +2,27 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reservas_app/core/constants/app_constants.dart';
 import 'package:reservas_app/features/domain/usecases/login_use_case.dart';
+import 'package:reservas_app/features/domain/usecases/reservas_advance_use_case.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUseCase _loginUseCase;
+  final ReservasAdvanceUseCase _reservasAdvanceUseCase;
 
-  LoginBloc({required LoginUseCase loginUseCase}) : 
+  LoginBloc({required LoginUseCase loginUseCase, required ReservasAdvanceUseCase reservasAdvanceUseCase}) : 
   _loginUseCase = loginUseCase,
+  _reservasAdvanceUseCase = reservasAdvanceUseCase,
   super(const LoginState()) {
     on<LoginUsernameChanged>(_onUsernameChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
     on<LoginReset>(_onReset);
+    on<reservas>(_onReservas);
   }
 
-  void _onUsernameChanged(
+    void _onUsernameChanged(
     LoginUsernameChanged event,
     Emitter<LoginState> emit,
   ) {
@@ -91,5 +95,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   bool _isValidPassword(String password) {
     return password.isNotEmpty && password.length >= AppConstants.minPasswordLength;
+  }
+
+  void _onReservas (
+    reservas event,
+    Emitter<LoginState> emit,
+  ) async {
+    // Implement the logic for reservas event if needed
+    print('Reservas event triggered');
+    final result = await _reservasAdvanceUseCase();
+    
+
   }
 }
