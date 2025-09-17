@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:reservas_app/core/errors/Failure.dart';
+import 'package:reservas_app/core/errors/failure.dart';
 import 'package:reservas_app/core/network/dio_client.dart';
 import 'package:reservas_app/features/data/models/reservas_model.dart';
 

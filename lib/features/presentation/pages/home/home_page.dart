@@ -131,7 +131,11 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 10),
+              
+              // Menú desplegable para maestros
+              _buildMasterDropdown(context),
+              const SizedBox(height: 10),
               // Título de módulos
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -170,15 +174,15 @@ class HomePage extends StatelessWidget {
                       subtitle: 'Administrar hoteles',
                       color: Colors.green,
                       onTap: () => context.go('/alojamiento'),
-                    ),/*
+                    ),
                     _buildModuleCard(
                       context,
                       icon: Icons.people_rounded,
-                      title: 'Clientes',
-                      subtitle: 'Gestión de usuarios',
+                      title: 'Recinto',
+                      subtitle: 'Gestión de recintos',
                       color: Colors.orange,
-                      onTap: () => context.go('/clientes'),
-                    ),
+                      onTap: () => context.go('/recintos'),
+                    ),/*
                     _buildModuleCard(
                       context,
                       icon: Icons.analytics_rounded,
@@ -225,6 +229,123 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildMasterDropdown(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.red.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent,
+        ),
+        child: ExpansionTile(
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.settings_rounded,
+              color: Colors.red[600],
+              size: 20,
+            ),
+          ),
+          title: Text(
+            'Lista maestros',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.red[600],
+            ),
+          ),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          childrenPadding: const EdgeInsets.only(bottom: 16),
+          iconColor: Colors.red[600],
+          collapsedIconColor: Colors.red[600],
+          children: [
+            _buildMasterOption(
+              context,
+              icon: Icons.person_outline,
+              title: 'Usuarios',
+              subtitle: 'Gestión de usuarios',
+              onTap: () => context.go('/usuarios'),
+            ),
+            _buildMasterOption(
+              context,
+              icon: Icons.category_outlined,
+              title: 'Categorías',
+              subtitle: 'Tipos de categorías',
+              onTap: () => context.go('/categorias'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMasterOption(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: Colors.grey[600],
+            size: 20,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 14,
+          color: Colors.grey[400],
+        ),
+        onTap: onTap,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
       ),
     );
   }

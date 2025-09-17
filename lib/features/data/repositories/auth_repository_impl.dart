@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:reservas_app/core/constants/app_constants.dart';
-import 'package:reservas_app/core/errors/Failure.dart';
+import 'package:reservas_app/core/errors/failure.dart';
 import 'package:reservas_app/core/storage/secure_storage.dart';
 import 'package:reservas_app/core/storage/shared_preferences.dart';
 import 'package:reservas_app/features/data/datasources/auth_remote_data_source.dart';

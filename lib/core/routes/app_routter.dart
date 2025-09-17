@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservas_app/features/presentation/pages/home/home_page.dart';
 import 'package:reservas_app/features/presentation/pages/login/login_page.dart';
+import 'package:reservas_app/features/presentation/pages/recintos/recinto_page.dart';
 import 'package:reservas_app/features/presentation/pages/reservas/reservas_page.dart';
 
 class AppRouter {
@@ -30,6 +31,13 @@ class AppRouter {
         builder: (context, state) {
           return const ReservasPage();
         }
+      ),
+      GoRoute(
+        path: '/recintos',
+        name: 'recintos',
+        builder: (context, state) {
+          return const RecintoPage();
+        } 
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
