@@ -6,20 +6,29 @@ import 'package:reservas_app/core/network/dio_client.dart';
 import 'package:reservas_app/core/storage/secure_storage.dart';
 import 'package:reservas_app/core/storage/shared_preferences.dart';
 import 'package:reservas_app/features/data/datasources/auth_remote_data_source.dart';
+import 'package:reservas_app/features/data/datasources/habitacion_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/recinto_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/reservas_remote_data_source.dart';
 import 'package:reservas_app/features/data/repositories/auth_repository_impl.dart';
+import 'package:reservas_app/features/data/repositories/habitacion_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/recinto_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/reservas_repository_impl.dart';
 import 'package:reservas_app/features/domain/repositories/auth_repository.dart';
+import 'package:reservas_app/features/domain/repositories/habitacion_repository.dart';
 import 'package:reservas_app/features/domain/repositories/recinto_repository.dart';
 import 'package:reservas_app/features/domain/repositories/reservas_repository.dart';
+import 'package:reservas_app/features/domain/usecases/habitacion_usecases/create_habitacion_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/habitacion_usecases/delete_habitacion_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/habitacion_usecases/get_habitacion_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/habitacion_usecases/update_habitacion_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/login_use_case.dart';
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/create_recinto_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/delete_recinto_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/get_recintos_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/update_recinto_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/reservas_advance_use_case.dart';
+import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/reservas/reservas_bloc.dart';
@@ -56,7 +65,9 @@ Future<void> init() async {
   di.registerLazySingleton<RecintoRemoteDataSource>(
     () => RecintoRemoteDataSourceImpl(dioClient: di()),
   );
-
+  di.registerLazySingleton<HabitacionRemoteDataSource>(
+    () => HabitacionRemoteDataSourceImpl(dioClient: di()),
+  );
   // Repositories
   di.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
@@ -71,6 +82,10 @@ Future<void> init() async {
 
   di.registerLazySingleton<RecintoRepository>(
     () => RecintoRepositoryImpl(remoteDataSource: di()),
+  );
+
+  di.registerLazySingleton<HabitacionRepository>(
+    () => HabitacionRepositoryImpl(remoteDataSource: di()),
   );
 
   // Use Cases
@@ -93,7 +108,28 @@ Future<void> init() async {
     () => DeleteRecintoUseCase(recintoRepository: di()),
   );
 
+  // Habitacion Use Cases
+  di.registerLazySingleton<GetHabitacionesUseCase>(
+    () => GetHabitacionesUseCase(habitacionRepository: di()),
+  );
+  di.registerLazySingleton<CreateHabitacionUseCase>(
+    () => CreateHabitacionUseCase(habitacionRepository: di()),
+  );
+  di.registerLazySingleton<UpdateHabitacionUseCase>(
+    () => UpdateHabitacionUseCase(habitacionRepository: di()),
+  );
+  di.registerLazySingleton<DeleteHabitacionUseCase>(
+    () => DeleteHabitacionUseCase(habitacionRepository: di()),
+  );
+
   // Blocs
+  di.registerLazySingleton<AuthBloc>(
+    () => AuthBloc(
+      secureStorage: di(),
+      sharedPreferences: di(),
+    ),
+  );
+
   di.registerFactory<LoginBloc>(
     () => LoginBloc(
       loginUseCase: di(),
@@ -110,6 +146,14 @@ Future<void> init() async {
       createRecintoUseCase: di(),
       updateRecintoUseCase: di(),
       deleteRecintoUseCase: di(),
+    ),
+  );
+  di.registerFactory<HabitacionBloc>(
+    () => HabitacionBloc(
+      getHabitacionesUseCase: di(),
+      createHabitacionUseCase: di(),
+      updateHabitacionUseCase: di(),
+      deleteHabitacionUseCase: di(),
     ),
   );
 }

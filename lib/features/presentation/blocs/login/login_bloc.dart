@@ -9,17 +9,14 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUseCase _loginUseCase;
-  final ReservasAdvanceUseCase _reservasAdvanceUseCase;
 
   LoginBloc({required LoginUseCase loginUseCase, required ReservasAdvanceUseCase reservasAdvanceUseCase}) : 
   _loginUseCase = loginUseCase,
-  _reservasAdvanceUseCase = reservasAdvanceUseCase,
   super(const LoginState()) {
     on<LoginUsernameChanged>(_onUsernameChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
     on<LoginSubmitted>(_onSubmitted);
     on<LoginReset>(_onReset);
-    on<reservas>(_onReservas);
   }
 
     void _onUsernameChanged(
@@ -97,14 +94,5 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     return password.isNotEmpty && password.length >= AppConstants.minPasswordLength;
   }
 
-  void _onReservas (
-    reservas event,
-    Emitter<LoginState> emit,
-  ) async {
-    // Implement the logic for reservas event if needed
-    print('Reservas event triggered');
-    final result = await _reservasAdvanceUseCase();
-    
-
-  }
+  
 }

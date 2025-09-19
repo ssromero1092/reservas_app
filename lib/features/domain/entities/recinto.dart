@@ -1,9 +1,9 @@
 class Recinto {
-  final int id;
+  final int idRecinto;
   final String descripcion;
 
   const Recinto({
-    required this.id, 
+    required this.idRecinto,
     required this.descripcion
     });
 }

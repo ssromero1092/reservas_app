@@ -28,11 +28,11 @@ class AuthRepositoryImpl implements AuthRepository {
         numeroUnico: numeroUnico,
       );
       
+      // Guardar todos los datos necesarios
       await secureStorage.saveToken(loginResponse.token);
-
       await secureStorage.saveDbname(loginResponse.dbname);
-      
       await secureStorage.savePassword(password);
+      await secureStorage.saveUsername(username); // Agregar esta línea
 
       await sharedRepository.setBool(
         AppConstants.cachedUsuarioKey,
@@ -44,7 +44,7 @@ class AuthRepositoryImpl implements AuthRepository {
         json.encode(loginResponse.empresa.toJson()),
       );
       
-      return Right(username);
+      return Right(loginResponse.token); // Retornar el token en lugar del username
     } catch (e) {
       return Left(ServerFailure(message: 'Error durante el login: ${e.toString()}'));
     }

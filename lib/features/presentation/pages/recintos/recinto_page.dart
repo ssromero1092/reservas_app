@@ -104,36 +104,6 @@ class RecintoPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Header Card
-                    Card(
-                      elevation: 4,
-                      child: Padding(
-                        padding: KPadding.allMD,
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.business_rounded,
-                              size: 48,
-                              color: theme.colorScheme.primary,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Administración de Recintos',
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Gestiona los recintos del sistema',
-                              style: theme.textTheme.bodyMedium,
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                     
                     const SizedBox(height: 12),
                     
@@ -154,7 +124,7 @@ class RecintoPage extends StatelessWidget {
                               ),
                             ),
                             icon: const Icon(Icons.refresh),
-                            label: const Text('Cargar Recintos'),
+                            label: const Text('Cargar'),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -170,7 +140,7 @@ class RecintoPage extends StatelessWidget {
                               ),
                             ),
                             icon: const Icon(Icons.add),
-                            label: const Text('Nuevo Recinto'),
+                            label: const Text('Nuevo'),
                           ),
                         ),
                       ],
@@ -310,7 +280,7 @@ class RecintoPage extends StatelessWidget {
                   leading: CircleAvatar(
                     backgroundColor: theme.colorScheme.primary,
                     child: Text(
-                      '${recinto.id}',
+                      '${recinto.idRecinto}',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
@@ -320,7 +290,7 @@ class RecintoPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: Text('ID: ${recinto.id}'),
+                  subtitle: Text('ID: ${recinto.idRecinto}'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -490,7 +460,7 @@ class RecintoPage extends StatelessWidget {
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
                 final recinto = Recinto(
-                  id: 0, // Se asignará en el servidor
+                  idRecinto: 0, // Se asignará en el servidor
                   descripcion: controller.text.trim(),
                 );
                 context.read<RecintoBloc>().add(AddRecinto(recinto));
@@ -543,7 +513,7 @@ class RecintoPage extends StatelessWidget {
             onPressed: () {
               if (controller.text.trim().isNotEmpty) {
                 final updatedRecinto = Recinto(
-                  id: recinto.id,
+                  idRecinto: recinto.idRecinto,
                   descripcion: controller.text.trim(),
                 );
                 context.read<RecintoBloc>().add(UpdateRecinto(updatedRecinto));
@@ -584,7 +554,7 @@ class RecintoPage extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              context.read<RecintoBloc>().add(DeleteRecinto(recinto.id));
+              context.read<RecintoBloc>().add(DeleteRecinto(recinto.idRecinto));
               Navigator.of(dialogContext).pop();
             },
             style: ElevatedButton.styleFrom(

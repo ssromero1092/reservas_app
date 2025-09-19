@@ -5,7 +5,25 @@ import 'package:reservas_app/features/data/models/lista_precio_model.dart';
 import 'package:reservas_app/features/domain/entities/reserva.dart';
 
 class ReservasModel extends Reserva{
-  ReservasModel({required super.fechaDesde, required super.fechaHasta, required super.idReserva, required super.noches, required super.total, required super.deposito, required super.adultos, required super.ninos, required super.observacion, required super.idHabitacion, required super.idCliente, required super.idListaPrecio, required super.idEstadoReserva, required super.habitacion, required super.cliente, required super.listaPrecio, required super.estadoReserva});
+  ReservasModel({
+    required super.fechaDesde, 
+    required super.fechaHasta, 
+    required super.idReserva, 
+    required super.noches, 
+    required super.total, 
+    required super.deposito, 
+    required super.adultos, 
+    required super.ninos, 
+    required super.observacion, 
+    required super.idHabitacion, 
+    required super.idCliente, 
+    required super.idListaPrecio, 
+    required super.idEstadoReserva, 
+    required super.habitacion, 
+    required super.cliente, 
+    required super.listaPrecio, 
+    required super.estadoReserva
+    });
 
 factory ReservasModel.fromJson(Map<String, dynamic> json) {
     return ReservasModel(

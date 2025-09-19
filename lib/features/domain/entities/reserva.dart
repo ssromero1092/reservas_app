@@ -1,6 +1,6 @@
 import 'package:reservas_app/features/domain/entities/cliente.dart';
 import 'package:reservas_app/features/domain/entities/estado_reserva.dart';
-import 'package:reservas_app/features/domain/entities/habiltacion.dart';
+import 'package:reservas_app/features/domain/entities/habitacion.dart';
 import 'package:reservas_app/features/domain/entities/lista_precio.dart';
 
 class Reserva {

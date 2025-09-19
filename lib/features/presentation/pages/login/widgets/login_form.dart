@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:toastification/toastification.dart';
 
@@ -22,6 +23,11 @@ class _LoginFormState extends State<LoginForm> {
     super.initState();
     _usernameController.addListener(_onUsernameChanged);
     _passwordController.addListener(_onPasswordChanged);
+    
+    // Reset login state cuando se carga el formulario
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<LoginBloc>().add(const LoginReset());
+    });
   }
 
   void _onUsernameChanged() {
@@ -68,6 +74,14 @@ class _LoginFormState extends State<LoginForm> {
                 type: ToastificationType.success,
                 autoCloseDuration: const Duration(seconds: 3),
               );
+              
+              // Notificar al AuthBloc del login exitoso
+              context.read<AuthBloc>().add(AuthLoginSuccess(
+                token: 'token', // Este valor debería venir del estado
+                username: state.username,
+                dbname: 'dbname', // Este valor debería venir del estado
+              ));
+              
               context.pushReplacement('/home');
             } else if (state.status == LoginStatus.failure) {
               toastification.show(
@@ -183,28 +197,24 @@ class _LoginFormState extends State<LoginForm> {
                   height: 56,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: state.isFormValid && state.status != LoginStatus.loading
-                        ? LinearGradient(
-                            colors: [
-                              theme.colorScheme.primary,
-                              theme.colorScheme.primary.withOpacity(0.8),
-                            ],
-                          )
-                        : null,
-                    boxShadow: state.isFormValid && state.status != LoginStatus.loading
-                        ? [
-                            BoxShadow(
-                              color: theme.colorScheme.primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : null,
+                    gradient: LinearGradient(
+                      colors: [
+                        theme.colorScheme.primary,
+                        theme.colorScheme.primary.withOpacity(0.8),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: ElevatedButton(
-                    onPressed: state.isFormValid && state.status != LoginStatus.loading
-                        ? () => _submitForm()
-                        : null,
+                    onPressed: state.status == LoginStatus.loading || !state.isFormValid
+                        ? null
+                        : _submitForm,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
@@ -213,7 +223,7 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     ),
                     child: state.status == LoginStatus.loading
-                        ? LoadingAnimationWidget.staggeredDotsWave(
+                        ? LoadingAnimationWidget.fourRotatingDots(
                             color: Colors.white,
                             size: 24,
                           )

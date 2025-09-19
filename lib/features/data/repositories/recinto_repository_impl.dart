@@ -26,7 +26,7 @@ class RecintoRepositoryImpl implements RecintoRepository {
   @override
   Future<Either<Failure, Unit>> update(Recinto recinto) async {
     return await remoteDataSource.updateRecinto(
-      recinto.id,
+      recinto.idRecinto,
       recinto.descripcion,
     );
   }
