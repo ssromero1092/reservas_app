@@ -23,6 +23,15 @@ class HomePage extends StatelessWidget {
           
           // Redireccionar al login
           context.go('/login');
+          } else if (state is AuthTokenRefreshFailed) {
+          // Mostrar mensaje de error al refrescar token
+          toastification.show(
+            context: context,
+            title: const Text('Error de autenticación'),
+            description: Text('No se pudo refrescar la sesión: ${state.message}'),
+            type: ToastificationType.error,
+            autoCloseDuration: const Duration(seconds: 3),
+          );
         }
       },
       child: Scaffold(
@@ -51,6 +60,25 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              // Indicador de refresh de token
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthTokenRefreshing) {
+                    return Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      child: const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                    );
+                  }
+                  return Container();
+                },
               ),
             ],
           ),

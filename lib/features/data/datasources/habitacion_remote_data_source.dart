@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:reservas_app/core/errors/failure.dart';
 import 'package:reservas_app/core/network/dio_client.dart';
@@ -40,17 +42,15 @@ class HabitacionRemoteDataSourceImpl implements HabitacionRemoteDataSource {
 
   @override
   Future<Either<Failure, Unit>> createHabitacion(String descripcion, String capacidad, int idRecinto) async {
-    print('descripcion: $descripcion');
-    print('capacidad: $capacidad');
-    print('idRecinto: $idRecinto');
     try {
+      
       final resp = await dioClient.dio.post(_habitacionEndpoint,
       data: {
         'descripcion': descripcion,
         'capacidad': capacidad,
         'id_recinto': idRecinto,
       });
-      print ('Response status: ${resp}');
+      log('Create habitacion response: ${resp.statusCode}', name: 'HabitacionRemoteDataSource');
       return resp.statusCode == 201 ? const Right(unit) : Left(ServerFailure(message: 'Error al crear habitacion'));
     } catch (e) {
       return Left(ServerFailure(message: 'Error: ${e.toString()}'));

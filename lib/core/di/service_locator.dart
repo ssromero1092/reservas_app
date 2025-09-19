@@ -46,28 +46,39 @@ Future<void> init() async {
   // Core
   di.registerLazySingleton<Logger>(() => Logger());
   di.registerLazySingleton<Dio>(() => Dio());
-  di.registerLazySingleton<FlutterSecureStorage>(() => FlutterSecureStorage());
+  
+  // Storage
+  di.registerLazySingleton<FlutterSecureStorage>(
+    () => const FlutterSecureStorage(),
+  );
+
   di.registerLazySingleton<SecureStorageRepository>(
     () => SecureStorageRepository(di()),
   );
 
-  di.registerLazySingleton<DioClient>(
-    () => DioClient(dio: di(), logger: di(), secureStorage: di()),
-  );
+  di.registerLazySingleton<DioClient>(() => DioClient(
+    dio: di(),
+    logger: di(),
+    secureStorage: di(),
+  ));
 
-  // Datasources
+  // Data Sources
   di.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(dioClient: di()),
   );
+
   di.registerLazySingleton<ReservasRemoteDataSource>(
     () => ReservasRemoteDataSourceImpl(dioClient: di()),
   );
+
   di.registerLazySingleton<RecintoRemoteDataSource>(
     () => RecintoRemoteDataSourceImpl(dioClient: di()),
   );
+
   di.registerLazySingleton<HabitacionRemoteDataSource>(
     () => HabitacionRemoteDataSourceImpl(dioClient: di()),
   );
+
   // Repositories
   di.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
@@ -76,6 +87,7 @@ Future<void> init() async {
       sharedRepository: di(),
     ),
   );
+
   di.registerLazySingleton<ReservasRepository>(
     () => ReservasRepositoryImpl(remoteDataSource: di()),
   );
@@ -127,6 +139,7 @@ Future<void> init() async {
     () => AuthBloc(
       secureStorage: di(),
       sharedPreferences: di(),
+      loginUseCase: di(), // Agregar LoginUseCase aquí
     ),
   );
 
@@ -140,6 +153,7 @@ Future<void> init() async {
   di.registerFactory<ReservasBloc>(
     () => ReservasBloc(reservasAdvanceUseCase: di()),
   );
+
   di.registerFactory<RecintoBloc>(
     () => RecintoBloc(
       getRecintosUseCase: di(),
@@ -148,6 +162,7 @@ Future<void> init() async {
       deleteRecintoUseCase: di(),
     ),
   );
+
   di.registerFactory<HabitacionBloc>(
     () => HabitacionBloc(
       getHabitacionesUseCase: di(),

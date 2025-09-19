@@ -31,3 +31,14 @@ class AuthUnauthenticated extends AuthState {}
 class AuthLoggedOut extends AuthState {
   const AuthLoggedOut();
 }
+
+class AuthTokenRefreshing extends AuthState {}
+
+class AuthTokenRefreshFailed extends AuthState {
+  final String message;
+
+  const AuthTokenRefreshFailed(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

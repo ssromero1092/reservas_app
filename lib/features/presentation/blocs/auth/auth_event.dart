@@ -11,6 +11,8 @@ class AuthCheckRequested extends AuthEvent {}
 
 class AuthLogoutRequested extends AuthEvent {}
 
+class AuthRefreshTokenRequested extends AuthEvent {}
+
 class AuthLoginSuccess extends AuthEvent {
   final String token;
   final String username;
