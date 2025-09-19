@@ -13,31 +13,22 @@ class RecintoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.business,
-                color: Colors.white,
-                size: 24,
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+              child: const Icon(Icons.business, color: Colors.white, size: 24),
             ),
             Expanded(
               child: Container(
                 alignment: Alignment.center,
                 child: const Text(
                   'Gestión de Recintos',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                 ),
               ),
             ),
@@ -104,16 +95,17 @@ class RecintoPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Header Card
-                    
                     const SizedBox(height: 12),
-                    
+
                     // Action Buttons
                     Row(
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              context.read<RecintoBloc>().add(const LoadRecintos());
+                              context.read<RecintoBloc>().add(
+                                const LoadRecintos(),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.primary,
@@ -145,13 +137,11 @@ class RecintoPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Content Area
-                    Expanded(
-                      child: _buildContent(context, state, theme),
-                    ),
+                    Expanded(child: _buildContent(context, state, theme)),
                   ],
                 );
               },
@@ -162,7 +152,11 @@ class RecintoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, RecintoState state, ThemeData theme) {
+  Widget _buildContent(
+    BuildContext context,
+    RecintoState state,
+    ThemeData theme,
+  ) {
     if (state is RecintoLoading) {
       return _buildLoadingState(theme);
     } else if (state is RecintoLoaded) {
@@ -201,7 +195,11 @@ class RecintoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadedState(RecintoLoaded state, ThemeData theme, BuildContext context) {
+  Widget _buildLoadedState(
+    RecintoLoaded state,
+    ThemeData theme,
+    BuildContext context,
+  ) {
     if (state.recintos.isEmpty) {
       return Card(
         elevation: 4,
@@ -254,10 +252,7 @@ class RecintoPage extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.check_circle, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Recintos Cargados (${state.recintos.length})',
@@ -295,19 +290,15 @@ class RecintoPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.blue[600],
-                        ),
-                        onPressed: () => _showEditDialog(context, theme, recinto),
+                        icon: Icon(Icons.edit, color: Colors.blue[600]),
+                        onPressed: () =>
+                            _showEditDialog(context, theme, recinto),
                         tooltip: 'Editar',
                       ),
                       IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red[600],
-                        ),
-                        onPressed: () => _showDeleteDialog(context, theme, recinto),
+                        icon: Icon(Icons.delete, color: Colors.red[600]),
+                        onPressed: () =>
+                            _showDeleteDialog(context, theme, recinto),
                         tooltip: 'Eliminar',
                       ),
                     ],
@@ -321,7 +312,11 @@ class RecintoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorState(RecintoError state, ThemeData theme, BuildContext context) {
+  Widget _buildErrorState(
+    RecintoError state,
+    ThemeData theme,
+    BuildContext context,
+  ) {
     return Card(
       elevation: 4,
       color: theme.colorScheme.errorContainer,
@@ -426,13 +421,13 @@ class RecintoPage extends StatelessWidget {
 
   void _showCreateDialog(BuildContext context, ThemeData theme) {
     final controller = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.all(24),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 40),
         title: Row(
           children: [
             Icon(Icons.add_business, color: theme.colorScheme.primary),
@@ -440,16 +435,21 @@ class RecintoPage extends StatelessWidget {
             const Text('Nuevo Recinto'),
           ],
         ),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: 'Descripción del recinto',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: SingleChildScrollView(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                labelText: 'Descripción del recinto',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                prefixIcon: const Icon(Icons.description),
+              ),
+              textCapitalization: TextCapitalization.sentences,
             ),
-            prefixIcon: const Icon(Icons.description),
           ),
-          textCapitalization: TextCapitalization.sentences,
         ),
         actions: [
           TextButton(
@@ -479,13 +479,13 @@ class RecintoPage extends StatelessWidget {
 
   void _showEditDialog(BuildContext context, ThemeData theme, Recinto recinto) {
     final controller = TextEditingController(text: recinto.descripcion);
-    
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.all(24),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 40),
         title: Row(
           children: [
             Icon(Icons.edit, color: Colors.blue[600]),
@@ -493,16 +493,17 @@ class RecintoPage extends StatelessWidget {
             const Text('Editar Recinto'),
           ],
         ),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: 'Descripción del recinto',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            prefixIcon: const Icon(Icons.description),
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Descripción del recinto',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              prefixIcon: const Icon(Icons.description),
           ),
           textCapitalization: TextCapitalization.sentences,
+        ),
         ),
         actions: [
           TextButton(
@@ -520,9 +521,7 @@ class RecintoPage extends StatelessWidget {
                 Navigator.of(dialogContext).pop();
               }
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[600],
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[600]),
             child: const Text('Actualizar'),
           ),
         ],
@@ -530,13 +529,17 @@ class RecintoPage extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, ThemeData theme, Recinto recinto) {
+  void _showDeleteDialog(
+    BuildContext context,
+    ThemeData theme,
+    Recinto recinto,
+  ) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.all(24),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 40),
         title: Row(
           children: [
             Icon(Icons.delete_forever, color: Colors.red[600]),
@@ -557,9 +560,7 @@ class RecintoPage extends StatelessWidget {
               context.read<RecintoBloc>().add(DeleteRecinto(recinto.idRecinto));
               Navigator.of(dialogContext).pop();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red[600],
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red[600]),
             child: const Text('Eliminar'),
           ),
         ],
