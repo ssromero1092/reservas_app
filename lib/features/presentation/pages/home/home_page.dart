@@ -391,7 +391,7 @@ class HomePage extends StatelessWidget {
                       title: 'Tipo Hospedaje',
                       subtitle: 'Gestión de Tipos de Hospedaje',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/recintos'),
+                      onTap: () => context.go('/tipos-hospedaje'),
                     ),
                     _buildMasterOption(
                       context,
@@ -399,7 +399,8 @@ class HomePage extends StatelessWidget {
                       title: 'Tipo Precio',
                       subtitle: 'Gestión de Tipos de Precio',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/recintos'),
+                      //onTap: () => context.go('/recintos'),
+                      onTap: () => context.go('/tipos-precio'),
                     ),
                     _buildMasterOption(
                       context,

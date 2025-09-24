@@ -6,6 +6,8 @@ import 'package:reservas_app/features/presentation/pages/login/login_page.dart';
 import 'package:reservas_app/features/presentation/pages/recintos/recinto_page.dart';
 import 'package:reservas_app/features/presentation/pages/reservas/reservas_page.dart';
 import 'package:reservas_app/features/presentation/pages/splash/splash_page.dart';
+import 'package:reservas_app/features/presentation/pages/tipo_hospedaje/tipo_hospedaje_page.dart';
+import 'package:reservas_app/features/presentation/pages/tipo_precio/tipo_precio_page.dart';
 
 class AppRouter {
   static GoRouter get router => _router;
@@ -54,6 +56,20 @@ class AppRouter {
         builder: (context, state) {
           return const HabitacionPage();
         } 
+      ),
+      GoRoute(
+        path: '/tipos-hospedaje',
+        name: 'tipos-hospedaje',
+        builder: (context, state) {
+          return const TipoHospedajePage();
+        } 
+      ),
+      GoRoute(
+        path: '/tipos-precio',
+        name: 'tipos-precio',
+        builder: (context, state) {
+          return const TipoPrecioPage();
+        }
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

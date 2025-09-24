@@ -6,6 +6,9 @@ import 'package:reservas_app/core/constants/k_padding.dart';
 import 'package:reservas_app/features/domain/entities/habitacion.dart';
 import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
+import 'package:reservas_app/features/presentation/pages/habitaciones/widgets/create_form.dart';
+import 'package:reservas_app/features/presentation/pages/habitaciones/widgets/delete_form.dart';
+import 'package:reservas_app/features/presentation/pages/habitaciones/widgets/edit_form.dart';
 import 'package:toastification/toastification.dart';
 
 class HabitacionPage extends StatelessWidget {
@@ -127,7 +130,7 @@ class HabitacionPage extends StatelessWidget {
                         const SizedBox(width: 16),
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: () => _showCreateDialog(context, theme),
+                            onPressed: () => CreateHabitacionDialog.show(context, theme),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
@@ -301,7 +304,7 @@ class HabitacionPage extends StatelessWidget {
                           Icons.edit,
                           color: Colors.blue[600],
                         ),
-                        onPressed: () => _showEditDialog(context, theme, habitacion),
+                        onPressed: () => EditHabitacionDialog.show(context, theme, habitacion),
                         tooltip: 'Editar',
                       ),
                       IconButton(
@@ -309,7 +312,7 @@ class HabitacionPage extends StatelessWidget {
                           Icons.delete,
                           color: Colors.red[600],
                         ),
-                        onPressed: () => _showDeleteDialog(context, theme, habitacion),
+                        onPressed: () => DeleteHabitacionDialog.show(context, theme, habitacion),
                         tooltip: 'Eliminar',
                       ),
                     ],
@@ -768,4 +771,5 @@ class HabitacionPage extends StatelessWidget {
       ),
     );
   }
+
 }

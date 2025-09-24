@@ -9,14 +9,20 @@ import 'package:reservas_app/features/data/datasources/auth_remote_data_source.d
 import 'package:reservas_app/features/data/datasources/habitacion_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/recinto_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/reservas_remote_data_source.dart';
+import 'package:reservas_app/features/data/datasources/tipo_hospedaje_remote_data_source.dart';
+import 'package:reservas_app/features/data/datasources/tipo_precio_remote_data_source.dart';
 import 'package:reservas_app/features/data/repositories/auth_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/habitacion_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/recinto_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/reservas_repository_impl.dart';
+import 'package:reservas_app/features/data/repositories/tipo_hospedaje_repository_impl.dart';
+import 'package:reservas_app/features/data/repositories/tipo_precio_repository_impl.dart';
 import 'package:reservas_app/features/domain/repositories/auth_repository.dart';
 import 'package:reservas_app/features/domain/repositories/habitacion_repository.dart';
 import 'package:reservas_app/features/domain/repositories/recinto_repository.dart';
 import 'package:reservas_app/features/domain/repositories/reservas_repository.dart';
+import 'package:reservas_app/features/domain/repositories/tipo_hospedaje_repository.dart';
+import 'package:reservas_app/features/domain/repositories/tipo_precio_repository.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/create_habitacion_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/delete_habitacion_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/get_habitacion_usecase.dart';
@@ -27,11 +33,21 @@ import 'package:reservas_app/features/domain/usecases/recinto_usecases/delete_re
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/get_recintos_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/update_recinto_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/reservas_advance_use_case.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_hospedaje_usecases/create_tipo_hospedaje_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_hospedaje_usecases/delete_tipo_hospedaje_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_hospedaje_usecases/get_tipo_hospedaje_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_hospedaje_usecases/update_tipo_hospedaje_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/create_tipo_precio_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/delete_tipo_precio_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/get_tipo_precio_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/update_tipo_precio_usecase.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/reservas/reservas_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/tipo_hospedaje/tipo_hospedaje_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/tipo_precio/tipo_precio_bloc.dart';
 
 final di = GetIt.instance;
 
@@ -78,6 +94,12 @@ Future<void> init() async {
   di.registerLazySingleton<HabitacionRemoteDataSource>(
     () => HabitacionRemoteDataSourceImpl(dioClient: di()),
   );
+  di.registerLazySingleton<TipoHospedajeRemoteDataSource>(
+    () => TipoHospedajeRemoteDataSourceImpl(dioClient: di()),
+  );
+  di.registerLazySingleton<TipoPrecioRemoteDataSource>(
+    () => TipoPrecioRemoteDataSourceImpl(dioClient: di()),
+  );
 
   // Repositories
   di.registerLazySingleton<AuthRepository>(
@@ -99,6 +121,13 @@ Future<void> init() async {
   di.registerLazySingleton<HabitacionRepository>(
     () => HabitacionRepositoryImpl(remoteDataSource: di()),
   );
+  di.registerLazySingleton<TipoHospedajeRepository>(
+    () => TipoHospedajeRepositoryImpl(remoteDataSource: di()),
+  );
+  di.registerLazySingleton<TipoPrecioRepository>(
+    () => TipoPrecioRepositoryImpl(remoteDataSource: di()),
+  );
+  
 
   // Use Cases
   di.registerLazySingleton<LoginUseCase>(() => LoginUseCase(repository: di()));
@@ -132,6 +161,34 @@ Future<void> init() async {
   );
   di.registerLazySingleton<DeleteHabitacionUseCase>(
     () => DeleteHabitacionUseCase(habitacionRepository: di()),
+  );
+
+  // TipoHospedaje Use Cases
+  di.registerLazySingleton<GetTipoHospedajesUseCase>(
+    () => GetTipoHospedajesUseCase(tipoHospedajeRepository: di()),
+  );
+  di.registerLazySingleton<CreateTipoHospedajeUseCase>(
+    () => CreateTipoHospedajeUseCase(tipoHospedajeRepository: di()),
+  );
+  di.registerLazySingleton<UpdateTipoHospedajeUseCase>(
+    () => UpdateTipoHospedajeUseCase(tipoHospedajeRepository: di()),
+  );
+  di.registerLazySingleton<DeleteTipoHospedajeUseCase>(
+    () => DeleteTipoHospedajeUseCase(tipoHospedajeRepository: di()),
+  );
+
+  // TipoPrecio Use Cases
+  di.registerLazySingleton<GetTipoPreciosUseCase>(
+    () => GetTipoPreciosUseCase(tipoPrecioRepository: di()),
+  );
+  di.registerLazySingleton<CreateTipoPrecioUseCase>(
+    () => CreateTipoPrecioUseCase(tipoPrecioRepository: di()),
+  );
+  di.registerLazySingleton<UpdateTipoPrecioUseCase>(
+    () => UpdateTipoPrecioUseCase(tipoPrecioRepository: di()),
+  );
+  di.registerLazySingleton<DeleteTipoPrecioUseCase>(
+    () => DeleteTipoPrecioUseCase(tipoPrecioRepository: di()),
   );
 
   // Blocs
@@ -169,6 +226,24 @@ Future<void> init() async {
       createHabitacionUseCase: di(),
       updateHabitacionUseCase: di(),
       deleteHabitacionUseCase: di(),
+    ),
+  );
+
+  di.registerFactory<TipoHospedajeBloc>(
+    () => TipoHospedajeBloc(
+      getTipoHospedajesUseCase: di(),
+      createTipoHospedajeUseCase: di(),
+      updateTipoHospedajeUseCase: di(),
+      deleteTipoHospedajeUseCase: di(),
+    ),
+  );
+
+  di.registerFactory<TipoPrecioBloc>(
+    () => TipoPrecioBloc(
+      getTipoPreciosUseCase: di(),
+      createTipoPrecioUseCase: di(),
+      updateTipoPrecioUseCase: di(),
+      deleteTipoPrecioUseCase: di(),
     ),
   );
 }

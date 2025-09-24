@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reservas_app/core/constants/k_padding.dart';
-import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
-import 'package:reservas_app/features/presentation/pages/recintos/widgets/create_form.dart';
-import 'package:reservas_app/features/presentation/pages/recintos/widgets/delete_form.dart';
-import 'package:reservas_app/features/presentation/pages/recintos/widgets/edit_form.dart';
+import 'package:reservas_app/features/presentation/blocs/tipo_precio/tipo_precio_bloc.dart';
+import 'package:reservas_app/features/presentation/pages/tipo_precio/widgets/create_form.dart';
+import 'package:reservas_app/features/presentation/pages/tipo_precio/widgets/delete_form.dart';
+import 'package:reservas_app/features/presentation/pages/tipo_precio/widgets/edit_form.dart';
 import 'package:toastification/toastification.dart';
 
-class RecintoPage extends StatelessWidget {
-  const RecintoPage({super.key});
+class TipoPrecioPage extends StatelessWidget {
+  const TipoPrecioPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +22,33 @@ class RecintoPage extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-              child: const Icon(Icons.business, color: Colors.white, size: 24),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.price_change,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
             Expanded(
               child: Container(
                 alignment: Alignment.center,
                 child: const Text(
-                  'Gestión de Recintos',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                  'Gestión de Tipos de Precio',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         elevation: 8,
-        shadowColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+        shadowColor: theme.colorScheme.primary.withOpacity(0.3),
         toolbarHeight: 70,
         actions: [
           Container(
@@ -72,9 +81,9 @@ class RecintoPage extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: KPadding.allMD,
-            child: BlocConsumer<RecintoBloc, RecintoState>(
+            child: BlocConsumer<TipoPrecioBloc, TipoPrecioState>(
               listener: (context, state) {
-                if (state is RecintoSuccess) {
+                if (state is TipoPrecioSuccess) {
                   toastification.show(
                     context: context,
                     title: const Text('¡Éxito!'),
@@ -82,7 +91,7 @@ class RecintoPage extends StatelessWidget {
                     type: ToastificationType.success,
                     autoCloseDuration: const Duration(seconds: 3),
                   );
-                } else if (state is RecintoError) {
+                } else if (state is TipoPrecioError) {
                   toastification.show(
                     context: context,
                     title: const Text('Error'),
@@ -96,18 +105,13 @@ class RecintoPage extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Header Card
                     const SizedBox(height: 12),
-
-                    // Action Buttons
                     Row(
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              context.read<RecintoBloc>().add(
-                                const LoadRecintos(),
-                              );
+                              context.read<TipoPrecioBloc>().add(const LoadTipoPrecios());
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.primary,
@@ -124,7 +128,7 @@ class RecintoPage extends StatelessWidget {
                         const SizedBox(width: 16),
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: () => CreateRecintoDialog.show(context, theme),
+                            onPressed: () => CreateTipoPrecioDialog.show(context, theme),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
@@ -139,11 +143,10 @@ class RecintoPage extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 12),
-
-                    // Content Area
-                    Expanded(child: _buildContent(context, state, theme)),
+                    Expanded(
+                      child: _buildContent(context, state, theme),
+                    ),
                   ],
                 );
               },
@@ -154,16 +157,12 @@ class RecintoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(
-    BuildContext context,
-    RecintoState state,
-    ThemeData theme,
-  ) {
-    if (state is RecintoLoading) {
+  Widget _buildContent(BuildContext context, TipoPrecioState state, ThemeData theme) {
+    if (state is TipoPrecioLoading) {
       return _buildLoadingState(theme);
-    } else if (state is RecintoLoaded) {
+    } else if (state is TipoPrecioLoaded) {
       return _buildLoadedState(state, theme, context);
-    } else if (state is RecintoError) {
+    } else if (state is TipoPrecioError) {
       return _buildErrorState(state, theme, context);
     } else {
       return _buildInitialState(theme, context);
@@ -185,7 +184,7 @@ class RecintoPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Cargando recintos...',
+                'Cargando tipos de precio...',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.primary,
                 ),
@@ -197,12 +196,8 @@ class RecintoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadedState(
-    RecintoLoaded state,
-    ThemeData theme,
-    BuildContext context,
-  ) {
-    if (state.recintos.isEmpty) {
+  Widget _buildLoadedState(TipoPrecioLoaded state, ThemeData theme, BuildContext context) {
+    if (state.tipoPrecios.isEmpty) {
       return Card(
         elevation: 4,
         child: Container(
@@ -212,20 +207,20 @@ class RecintoPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.business_outlined,
+                  Icons.price_change_outlined,
                   size: 80,
                   color: theme.colorScheme.onSurface.withOpacity(0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'No hay recintos registrados',
+                  'No hay tipos de precio registrados',
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Crea tu primer recinto usando el botón "Nuevo Recinto"',
+                  'Crea tu primer tipo de precio usando el botón "Nuevo"',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.5),
                   ),
@@ -254,10 +249,13 @@ class RecintoPage extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.check_circle, color: theme.colorScheme.primary),
+                Icon(
+                  Icons.check_circle,
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  'Recintos Cargados (${state.recintos.length})',
+                  'Tipos de Precio Cargados (${state.tipoPrecios.length})',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
@@ -269,38 +267,50 @@ class RecintoPage extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               padding: KPadding.allMD,
-              itemCount: state.recintos.length,
+              itemCount: state.tipoPrecios.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final recinto = state.recintos[index];
+                final tipoPrecio = state.tipoPrecios[index];
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundColor: theme.colorScheme.primary,
                     child: Text(
-                      '${recinto.idRecinto}',
+                      '${tipoPrecio.idTipoPrecio}',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   title: Text(
-                    recinto.descripcion,
+                    tipoPrecio.descripcion,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: Text('ID: ${recinto.idRecinto}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ID: ${tipoPrecio.idTipoPrecio}'),
+                      if (tipoPrecio.observacion.isNotEmpty)
+                        Text('Observación: ${tipoPrecio.observacion}'),
+                    ],
+                  ),
+                  isThreeLine: tipoPrecio.observacion.isNotEmpty,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue[600]),
-                        onPressed: () =>
-                            EditRecientoDialog.show(context, theme, recinto),
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.blue[600],
+                        ),
+                        onPressed: () => EditTipoPrecioDialog.show(context, theme, tipoPrecio),
                         tooltip: 'Editar',
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red[600]),
-                        onPressed: () =>
-                            DeleteRecintoDialog.show(context, theme, recinto),
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red[600],
+                        ),
+                        onPressed: () => DeleteTipoPrecioDialog.show(context, theme, tipoPrecio),
                         tooltip: 'Eliminar',
                       ),
                     ],
@@ -314,11 +324,7 @@ class RecintoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorState(
-    RecintoError state,
-    ThemeData theme,
-    BuildContext context,
-  ) {
+  Widget _buildErrorState(TipoPrecioError state, ThemeData theme, BuildContext context) {
     return Card(
       elevation: 4,
       color: theme.colorScheme.errorContainer,
@@ -335,7 +341,7 @@ class RecintoPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Error al cargar recintos',
+                'Error al cargar tipos de precio',
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: theme.colorScheme.error,
                   fontWeight: FontWeight.bold,
@@ -352,7 +358,7 @@ class RecintoPage extends StatelessWidget {
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: () {
-                  context.read<RecintoBloc>().add(const LoadRecintos());
+                  context.read<TipoPrecioBloc>().add(const LoadTipoPrecios());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.error,
@@ -378,13 +384,13 @@ class RecintoPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.business,
+                Icons.price_change,
                 size: 80,
                 color: theme.colorScheme.primary.withOpacity(0.7),
               ),
               const SizedBox(height: 16),
               Text(
-                'Bienvenido a Recintos',
+                'Bienvenido a T. Precio',
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -392,7 +398,7 @@ class RecintoPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Toca "Cargar Recintos" para comenzar',
+                'Toca "Cargar" para comenzar',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
@@ -401,7 +407,7 @@ class RecintoPage extends StatelessWidget {
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: () {
-                  context.read<RecintoBloc>().add(const LoadRecintos());
+                  context.read<TipoPrecioBloc>().add(const LoadTipoPrecios());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
@@ -420,5 +426,4 @@ class RecintoPage extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -9,6 +9,8 @@ import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_b
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/reservas/reservas_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/tipo_hospedaje/tipo_hospedaje_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/tipo_precio/tipo_precio_bloc.dart';
 import 'package:toastification/toastification.dart';
 
 void main() async {
@@ -42,6 +44,12 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider<HabitacionBloc>(
           create: (context) => GetIt.instance.get<HabitacionBloc>(),
+        ),
+        BlocProvider<TipoHospedajeBloc>(
+          create: (context) => GetIt.instance.get<TipoHospedajeBloc>(),
+        ),
+        BlocProvider<TipoPrecioBloc>(
+          create: (context) => GetIt.instance.get<TipoPrecioBloc>(),
         ),
       ],
       child: ToastificationWrapper(
