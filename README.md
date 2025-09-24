@@ -42,7 +42,7 @@ Reservas App es una aplicación desarrollada en Flutter que permite gestionar re
 ## Estructura del Proyecto
 
 ```
-rlib/
+lib/
 ├── core/                           # Funcionalidades compartidas
 │   ├── constants/                  # Constantes globales
 │   ├── di/                         # Inyección de dependencias
