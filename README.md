@@ -42,20 +42,28 @@ Reservas App es una aplicación desarrollada en Flutter que permite gestionar re
 ## Estructura del Proyecto
 
 ```
-reservas_app/
-├── lib/
-│   ├── main.dart
-│   ├── models/
-│   ├── screens/
-│   ├── widgets/
-│   ├── services/
-│   └── utils/
-├── assets/
-│   ├── images/
-│   └── icons/
-├── test/
-├── pubspec.yaml
-└── README.md
+rlib/
+├── core/                           # Funcionalidades compartidas
+│   ├── constants/                  # Constantes globales
+│   ├── di/                         # Inyección de dependencias
+│   ├── errors/                     # Manejo de errores
+│   ├── network/                    # Cliente HTTP (Dio)
+│   ├── routes/                     # Configuración de rutas
+│   ├── storage/                    # Almacenamiento local
+│   └── theme/                      # Tema de la aplicación
+├── features/                       # Características por dominio
+│   ├── data/                       # Capa de datos
+│   │   ├── datasources/           # Fuentes de datos remotas
+│   │   ├── models/                # Modelos de datos
+│   │   └── repositories/          # Implementación de repositorios
+│   ├── domain/                     # Lógica de negocio
+│   │   ├── entities/              # Entidades del dominio
+│   │   ├── repositories/          # Contratos de repositorios
+│   │   └── usecases/              # Casos de uso
+│   └── presentation/              # Capa de presentación
+│       ├── blocs/                 # Gestión de estado (BLoC)
+│       └── pages/                 # Pantallas y widgets
+└── main.dart         
 ```
 
 - **models/**: Modelos de datos (usuarios, reservas, etc.).
