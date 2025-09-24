@@ -282,7 +282,7 @@ class ReservasPage extends StatelessWidget {
                     ),
                   ),
                   title: Text(
-                    'Reserva #${reserva.idReserva ?? index + 1}',
+                    'Reserva #${reserva.idReserva}',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -291,10 +291,9 @@ class ReservasPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 4),
-                      Text('Cliente: ${reserva.cliente.nombreCompleto ?? 'Sin nombre'}'),
-                      Text('Fecha: ${reserva.fechaDesde ?? 'Sin fecha'}'),
-                      if (reserva.estadoReserva.descripcion != null)
-                        Text('Estado: ${reserva.estadoReserva.descripcion}'),
+                      Text('Cliente: ${reserva.cliente.nombreCompleto}'),
+                      Text('Fecha: ${reserva.fechaDesde}'),
+                      Text('Estado: ${reserva.estadoReserva.descripcion}'),
                     ],
                   ),
                   trailing: Icon(
@@ -306,7 +305,7 @@ class ReservasPage extends StatelessWidget {
                     // Aquí podrías navegar a los detalles de la reserva
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Ver detalles de reserva #${reserva.idReserva ?? index + 1}'),
+                        content: Text('Ver detalles de reserva #${reserva.idReserva}'),
                         duration: const Duration(seconds: 2),
                       ),
                     );
