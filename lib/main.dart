@@ -6,6 +6,7 @@ import 'package:reservas_app/core/routes/app_routter.dart';
 import 'package:reservas_app/core/theme/app_theme.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/lista_precio/lista_precio_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/reservas/reservas_bloc.dart';
@@ -50,6 +51,9 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider<TipoPrecioBloc>(
           create: (context) => GetIt.instance.get<TipoPrecioBloc>(),
+        ),
+        BlocProvider<ListaPrecioBloc>(
+          create: (context) => GetIt.instance.get<ListaPrecioBloc>(),
         ),
       ],
       child: ToastificationWrapper(

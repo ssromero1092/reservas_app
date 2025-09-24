@@ -7,18 +7,21 @@ import 'package:reservas_app/core/storage/secure_storage.dart';
 import 'package:reservas_app/core/storage/shared_preferences.dart';
 import 'package:reservas_app/features/data/datasources/auth_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/habitacion_remote_data_source.dart';
+import 'package:reservas_app/features/data/datasources/lista_precio_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/recinto_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/reservas_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/tipo_hospedaje_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/tipo_precio_remote_data_source.dart';
 import 'package:reservas_app/features/data/repositories/auth_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/habitacion_repository_impl.dart';
+import 'package:reservas_app/features/data/repositories/lista_precio_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/recinto_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/reservas_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/tipo_hospedaje_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/tipo_precio_repository_impl.dart';
 import 'package:reservas_app/features/domain/repositories/auth_repository.dart';
 import 'package:reservas_app/features/domain/repositories/habitacion_repository.dart';
+import 'package:reservas_app/features/domain/repositories/lista_precio_repository.dart';
 import 'package:reservas_app/features/domain/repositories/recinto_repository.dart';
 import 'package:reservas_app/features/domain/repositories/reservas_repository.dart';
 import 'package:reservas_app/features/domain/repositories/tipo_hospedaje_repository.dart';
@@ -27,6 +30,10 @@ import 'package:reservas_app/features/domain/usecases/habitacion_usecases/create
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/delete_habitacion_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/get_habitacion_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/update_habitacion_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/lista_precio_usecases/create_lista_precio_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/lista_precio_usecases/delete_lista_precio_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/lista_precio_usecases/get_lista_precio_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/lista_precio_usecases/update_lista_precio_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/login_use_case.dart';
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/create_recinto_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/recinto_usecases/delete_recinto_usecase.dart';
@@ -43,6 +50,7 @@ import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/get_t
 import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/update_tipo_precio_usecase.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/lista_precio/lista_precio_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/reservas/reservas_bloc.dart';
@@ -100,6 +108,9 @@ Future<void> init() async {
   di.registerLazySingleton<TipoPrecioRemoteDataSource>(
     () => TipoPrecioRemoteDataSourceImpl(dioClient: di()),
   );
+  di.registerLazySingleton<ListaPrecioRemoteDataSource>(
+    () => ListaPrecioRemoteDataSourceImpl(dioClient: di()),
+  );
 
   // Repositories
   di.registerLazySingleton<AuthRepository>(
@@ -126,6 +137,9 @@ Future<void> init() async {
   );
   di.registerLazySingleton<TipoPrecioRepository>(
     () => TipoPrecioRepositoryImpl(remoteDataSource: di()),
+  );
+  di.registerLazySingleton<ListaPrecioRepository>(
+    () => ListaPrecioRepositoryImpl(remoteDataSource: di()),
   );
   
 
@@ -191,6 +205,20 @@ Future<void> init() async {
     () => DeleteTipoPrecioUseCase(tipoPrecioRepository: di()),
   );
 
+  // ListaPrecio Use Cases
+  di.registerLazySingleton<GetListaPreciosUseCase>(
+    () => GetListaPreciosUseCase(listaPrecioRepository: di()),
+  );
+  di.registerLazySingleton<CreateListaPrecioUseCase>(
+    () => CreateListaPrecioUseCase(listaPrecioRepository: di()),
+  );
+  di.registerLazySingleton<UpdateListaPrecioUseCase>(
+    () => UpdateListaPrecioUseCase(listaPrecioRepository: di()),
+  );
+  di.registerLazySingleton<DeleteListaPrecioUseCase>(
+    () => DeleteListaPrecioUseCase(listaPrecioRepository: di()),
+  );
+
   // Blocs
   di.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
@@ -244,6 +272,15 @@ Future<void> init() async {
       createTipoPrecioUseCase: di(),
       updateTipoPrecioUseCase: di(),
       deleteTipoPrecioUseCase: di(),
+    ),
+  );
+
+  di.registerFactory<ListaPrecioBloc>(
+    () => ListaPrecioBloc(
+      getListaPreciosUseCase: di(),
+      createListaPrecioUseCase: di(),
+      updateListaPrecioUseCase: di(),
+      deleteListaPrecioUseCase: di(),
     ),
   );
 }

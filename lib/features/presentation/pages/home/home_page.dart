@@ -408,7 +408,7 @@ class HomePage extends StatelessWidget {
                       title: 'Lista Precio',
                       subtitle: 'Gestión de Listas de Precio',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/recintos'),
+                      onTap: () => context.go('/listas-precio'),
                     ),            
                     _buildMasterOption(
                       context,
