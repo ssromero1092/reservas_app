@@ -20,67 +20,36 @@ class HabitacionPage extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.meeting_room,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            Expanded(
-              child: Container(
-                alignment: Alignment.center,
-                child: const Text(
-                  'Gestión de Habitaciones',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
+            Icon(Icons.meeting_room, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Gestión de Habitaciones'),
           ],
         ),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         elevation: 8,
-        shadowColor: theme.colorScheme.primary.withOpacity(0.3),
-        toolbarHeight: 70,
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () => context.go('/home'),
-              tooltip: 'Volver al Inicio',
-              iconSize: 24,
-              padding: const EdgeInsets.all(12),
-            ),
+          IconButton(
+            onPressed: () => context.go('/home'),
+            icon: const Icon(Icons.home),
+            tooltip: 'Ir al inicio',
           ),
         ],
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [
               theme.colorScheme.primary.withOpacity(0.1),
-              theme.colorScheme.secondary.withOpacity(0.1),
+              Colors.white,
             ],
           ),
         ),
         child: SafeArea(
           child: Padding(
-            padding: KPadding.allMD,
+            padding: KPadding.horizontalSM,
             child: BlocConsumer<HabitacionBloc, HabitacionState>(
               listener: (context, state) {
                 if (state is HabitacionSuccess) {
@@ -102,53 +71,7 @@ class HabitacionPage extends StatelessWidget {
                 }
               },
               builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              context.read<HabitacionBloc>().add(const LoadHabitaciones());
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            icon: const Icon(Icons.refresh),
-                            label: const Text('Cargar'),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => CreateHabitacionDialog.show(context, theme),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Nuevo'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Expanded(
-                      child: _buildContent(context, state, theme),
-                    ),
-                  ],
-                );
+                return _buildContent(context, state, theme);
               },
             ),
           ),
@@ -173,24 +96,28 @@ class HabitacionPage extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Container(
-        padding: KPadding.allMD,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              LoadingAnimationWidget.staggeredDotsWave(
-                color: theme.colorScheme.primary,
-                size: 50,
+        width: double.infinity,
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            LoadingAnimationWidget.waveDots(
+              color: theme.colorScheme.primary,
+              size: 50,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Cargando habitaciones...',
+              style: TextStyle(
+                fontSize: 16,
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
-              const SizedBox(height: 24),
-              Text(
-                'Cargando habitaciones...',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -201,33 +128,40 @@ class HabitacionPage extends StatelessWidget {
       return Card(
         elevation: 4,
         child: Container(
-          padding: KPadding.allMD,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.meeting_room_outlined,
-                  size: 80,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+          width: double.infinity,
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.meeting_room_outlined,
+                size: 80,
+                color: theme.colorScheme.primary.withOpacity(0.5),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'No hay habitaciones registradas',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'No hay habitaciones registradas',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => CreateHabitacionDialog.show(context, theme),
+                icon: const Icon(Icons.add),
+                label: const Text('Crear Primera Habitación'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Crea tu primera habitación usando el botón "Nueva Habitación"',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );
@@ -239,7 +173,8 @@ class HabitacionPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: KPadding.allMD,
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: const BorderRadius.only(
@@ -248,17 +183,23 @@ class HabitacionPage extends StatelessWidget {
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
                 Text(
-                  'Habitaciones Cargadas (${state.habitaciones.length})',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.primary,
+                  'Habitaciones (${state.habitaciones.length})',
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => CreateHabitacionDialog.show(context, theme),
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Nuevo'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                 ),
               ],
@@ -266,52 +207,77 @@ class HabitacionPage extends StatelessWidget {
           ),
           Expanded(
             child: ListView.separated(
-              padding: KPadding.allMD,
+              padding: const EdgeInsets.all(16),
               itemCount: state.habitaciones.length,
-              separatorBuilder: (context, index) => const Divider(),
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final habitacion = state.habitaciones[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: theme.colorScheme.primary,
-                    child: Text(
-                      '${habitacion.idHabitacion}',
-                      style: const TextStyle(color: Colors.white),
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: theme.colorScheme.outline.withOpacity(0.2),
                     ),
-                  ),
-                  title: Text(
-                    habitacion.descripcion,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ID: ${habitacion.idHabitacion}'),
-                      Text('Capacidad: ${habitacion.capacidad}'),
-                      Text('Recinto: ${habitacion.recinto?.descripcion ?? "ID: ${habitacion.idRecinto}"}'),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
-                  isThreeLine: true,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.blue[600],
-                        ),
-                        onPressed: () => EditHabitacionDialog.show(context, theme, habitacion),
-                        tooltip: 'Editar',
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red[600],
-                        ),
-                        onPressed: () => DeleteHabitacionDialog.show(context, theme, habitacion),
-                        tooltip: 'Eliminar',
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  habitacion.descripcion,
+                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Capacidad: ${habitacion.capacidad}',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  'Recinto: ${habitacion.recinto?.descripcion ?? "ID: ${habitacion.idRecinto}"}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text('ID: ${habitacion.idHabitacion}'),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              IconButton(
+                                onPressed: () => EditHabitacionDialog.show(context, theme, habitacion),
+                                icon: Icon(Icons.edit, color: Colors.blue[600]),
+                                tooltip: 'Editar',
+                              ),
+                              IconButton(
+                                onPressed: () => DeleteHabitacionDialog.show(context, theme, habitacion),
+                                icon: Icon(Icons.delete, color: Colors.red[600]),
+                                tooltip: 'Eliminar',
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -329,46 +295,49 @@ class HabitacionPage extends StatelessWidget {
       elevation: 4,
       color: theme.colorScheme.errorContainer,
       child: Container(
-        padding: KPadding.allMD,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 80,
+        width: double.infinity,
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 80,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Error al cargar las habitaciones',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.error,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              state.message,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.error,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Error al cargar habitaciones',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.error,
-                  fontWeight: FontWeight.bold,
-                ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<HabitacionBloc>().add(const LoadHabitaciones());
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Reintentar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: Colors.white,
               ),
-              const SizedBox(height: 8),
-              Text(
-                state.message,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.read<HabitacionBloc>().add(const LoadHabitaciones());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.error,
-                  foregroundColor: Colors.white,
-                ),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Reintentar'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -378,50 +347,51 @@ class HabitacionPage extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Container(
-        padding: KPadding.allMD,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.meeting_room,
-                size: 80,
-                color: theme.colorScheme.primary.withOpacity(0.7),
+        width: double.infinity,
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.meeting_room_outlined,
+              size: 80,
+              color: theme.colorScheme.primary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Habitaciones',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Bienvenido a Habitaciones',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Gestiona las habitaciones disponibles.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Toca "Cargar Habitaciones" para comenzar',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                ),
-                textAlign: TextAlign.center,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<HabitacionBloc>().add(const LoadHabitaciones());
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Cargar Habitaciones'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.read<HabitacionBloc>().add(const LoadHabitaciones());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                ),
-                icon: const Icon(Icons.play_arrow),
-                label: const Text('Comenzar'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -12,7 +12,7 @@ class CreateListaPrecioDialog {
     int? selectedIdTipoHospedaje;
     int? selectedIdTipoPrecio;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(

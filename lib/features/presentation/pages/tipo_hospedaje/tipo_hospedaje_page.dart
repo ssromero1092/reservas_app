@@ -20,135 +20,56 @@ class TipoHospedajePage extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.hotel,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-            Expanded(
-              child: Container(
-                alignment: Alignment.center,
-                child: const Text(
-                  'Gestión de Tipos de Hospedaje',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
+            Icon(Icons.hotel, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text('Tipos de Hospedaje'),
           ],
         ),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         elevation: 8,
-        shadowColor: theme.colorScheme.primary.withOpacity(0.3),
-        toolbarHeight: 70,
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () => context.go('/home'),
-              tooltip: 'Volver al Inicio',
-              iconSize: 24,
-              padding: const EdgeInsets.all(12),
-            ),
+          IconButton(
+            onPressed: () => context.go('/home'),
+            icon: const Icon(Icons.home),
+            tooltip: 'Ir al inicio',
           ),
         ],
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [
               theme.colorScheme.primary.withOpacity(0.1),
-              theme.colorScheme.secondary.withOpacity(0.1),
+              Colors.white,
             ],
           ),
         ),
         child: SafeArea(
           child: Padding(
-            padding: KPadding.allMD,
+            padding: KPadding.horizontalSM,
             child: BlocConsumer<TipoHospedajeBloc, TipoHospedajeState>(
               listener: (context, state) {
                 if (state is TipoHospedajeSuccess) {
                   toastification.show(
                     context: context,
-                    title: const Text('¡Éxito!'),
-                    description: Text(state.message),
+                    title: Text(state.message),
                     type: ToastificationType.success,
                     autoCloseDuration: const Duration(seconds: 3),
                   );
                 } else if (state is TipoHospedajeError) {
                   toastification.show(
                     context: context,
-                    title: const Text('Error'),
-                    description: Text(state.message),
+                    title: Text(state.message),
                     type: ToastificationType.error,
-                    autoCloseDuration: const Duration(seconds: 5),
+                    autoCloseDuration: const Duration(seconds: 3),
                   );
                 }
               },
               builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              context.read<TipoHospedajeBloc>().add(const LoadTipoHospedajes());
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            icon: const Icon(Icons.refresh),
-                            label: const Text('Cargar'),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => CreateTipoHospedajeDialog.show(context, theme),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Nuevo'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Expanded(
-                      child: _buildContent(context, state, theme),
-                    ),
-                  ],
-                );
+                return _buildContent(context, state, theme);
               },
             ),
           ),
@@ -173,24 +94,28 @@ class TipoHospedajePage extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Container(
-        padding: KPadding.allMD,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              LoadingAnimationWidget.staggeredDotsWave(
-                color: theme.colorScheme.primary,
-                size: 50,
+        width: double.infinity,
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            LoadingAnimationWidget.waveDots(
+              color: theme.colorScheme.primary,
+              size: 50,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Cargando tipos de hospedaje...',
+              style: TextStyle(
+                fontSize: 16,
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
-              const SizedBox(height: 24),
-              Text(
-                'Cargando tipos de hospedaje...',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -201,33 +126,40 @@ class TipoHospedajePage extends StatelessWidget {
       return Card(
         elevation: 4,
         child: Container(
-          padding: KPadding.allMD,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.hotel_outlined,
-                  size: 80,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+          width: double.infinity,
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.hotel_outlined,
+                size: 80,
+                color: theme.colorScheme.primary.withOpacity(0.5),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'No hay tipos de hospedaje registrados',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'No hay tipos de hospedaje registrados',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => CreateTipoHospedajeDialog.show(context, theme),
+                icon: const Icon(Icons.add),
+                label: const Text('Crear Primer Tipo de Hospedaje'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Crea tu primer tipo de hospedaje usando el botón "Nuevo"',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );
@@ -236,10 +168,10 @@ class TipoHospedajePage extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: KPadding.allMD,
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: const BorderRadius.only(
@@ -248,17 +180,23 @@ class TipoHospedajePage extends StatelessWidget {
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
                 Text(
-                  'Tipos de Hospedaje Cargados (${state.tipoHospedajes.length})',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.primary,
+                  'Tipos de Hospedaje (${state.tipoHospedajes.length})',
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => CreateTipoHospedajeDialog.show(context, theme),
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Nuevo'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                 ),
               ],
@@ -266,51 +204,73 @@ class TipoHospedajePage extends StatelessWidget {
           ),
           Expanded(
             child: ListView.separated(
-              padding: KPadding.allMD,
+              padding: const EdgeInsets.all(16),
               itemCount: state.tipoHospedajes.length,
-              separatorBuilder: (context, index) => const Divider(),
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final tipoHospedaje = state.tipoHospedajes[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: theme.colorScheme.primary,
-                    child: Text(
-                      '${tipoHospedaje.idTipoHospedaje}',
-                      style: const TextStyle(color: Colors.white),
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: theme.colorScheme.outline.withOpacity(0.2),
                     ),
-                  ),
-                  title: Text(
-                    tipoHospedaje.descripcion,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ID: ${tipoHospedaje.idTipoHospedaje}'),
-                      Text('Equipamiento: ${tipoHospedaje.equipamiento}'),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
-                  isThreeLine: true,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.blue[600],
-                        ),
-                        onPressed: () => EditTipoHospedajeDialog.show(context, theme, tipoHospedaje),
-                        tooltip: 'Editar',
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red[600],
-                        ),
-                        onPressed: () => DeleteTipoHospedajeDialog.show(context, theme, tipoHospedaje),
-                        tooltip: 'Eliminar',
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  tipoHospedaje.descripcion,
+                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                if (tipoHospedaje.equipamiento.isNotEmpty) ...[
+                                  Text(
+                                    'Equipamiento: ${tipoHospedaje.equipamiento}',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                                Text('ID: ${tipoHospedaje.idTipoHospedaje}'),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              IconButton(
+                                onPressed: () => EditTipoHospedajeDialog.show(context, theme, tipoHospedaje),
+                                icon: Icon(Icons.edit, color: Colors.blue[600]),
+                                tooltip: 'Editar',
+                              ),
+                              IconButton(
+                                onPressed: () => DeleteTipoHospedajeDialog.show(context, theme, tipoHospedaje),
+                                icon: Icon(Icons.delete, color: Colors.red[600]),
+                                tooltip: 'Eliminar',
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -328,46 +288,49 @@ class TipoHospedajePage extends StatelessWidget {
       elevation: 4,
       color: theme.colorScheme.errorContainer,
       child: Container(
-        padding: KPadding.allMD,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 80,
+        width: double.infinity,
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 80,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Error al cargar tipos de hospedaje',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.error,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              state.message,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.error,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Error al cargar tipos de hospedaje',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.error,
-                  fontWeight: FontWeight.bold,
-                ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<TipoHospedajeBloc>().add(const LoadTipoHospedajes());
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Reintentar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: Colors.white,
               ),
-              const SizedBox(height: 8),
-              Text(
-                state.message,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.read<TipoHospedajeBloc>().add(const LoadTipoHospedajes());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.error,
-                  foregroundColor: Colors.white,
-                ),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Reintentar'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -377,50 +340,51 @@ class TipoHospedajePage extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Container(
-        padding: KPadding.allMD,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.hotel,
-                size: 80,
-                color: theme.colorScheme.primary.withOpacity(0.7),
+        width: double.infinity,
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.hotel_outlined,
+              size: 80,
+              color: theme.colorScheme.primary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Tipos de Hospedaje',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Bienvenido a T. Hospedaje',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Gestiona los tipos de hospedaje disponibles.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Toca "Cargar" para comenzar',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                ),
-                textAlign: TextAlign.center,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<TipoHospedajeBloc>().add(const LoadTipoHospedajes());
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Cargar Tipos de Hospedaje'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.read<TipoHospedajeBloc>().add(const LoadTipoHospedajes());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                ),
-                icon: const Icon(Icons.play_arrow),
-                label: const Text('Comenzar'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -37,8 +37,6 @@ class ListaPrecioPage extends StatelessWidget {
         ],
       ),
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -49,8 +47,10 @@ class ListaPrecioPage extends StatelessWidget {
             ],
           ),
         ),
+        child: SafeArea(
+        
         child: Padding(
-          padding: KPadding.horizontalMD,
+          padding: KPadding.horizontalSM,
           child: BlocConsumer<ListaPrecioBloc, ListaPrecioState>(
             listener: (context, state) {
               if (state is ListaPrecioSuccess) {
@@ -74,6 +74,7 @@ class ListaPrecioPage extends StatelessWidget {
             },
           ),
         ),
+        )
       ),
     );
   }
