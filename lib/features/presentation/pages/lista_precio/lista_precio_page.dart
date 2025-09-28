@@ -41,45 +41,45 @@ class ListaPrecioPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              theme.colorScheme.primary.withOpacity(0.1),
-              Colors.white,
-            ],
+            colors: [theme.colorScheme.primary.withOpacity(0.1), Colors.white],
           ),
         ),
         child: SafeArea(
-        
-        child: Padding(
-          padding: KPadding.horizontalSM,
-          child: BlocConsumer<ListaPrecioBloc, ListaPrecioState>(
-            listener: (context, state) {
-              if (state is ListaPrecioSuccess) {
-                toastification.show(
-                  context: context,
-                  title: Text(state.message),
-                  type: ToastificationType.success,
-                  autoCloseDuration: const Duration(seconds: 3),
-                );
-              } else if (state is ListaPrecioError) {
-                toastification.show(
-                  context: context,
-                  title: Text(state.message),
-                  type: ToastificationType.error,
-                  autoCloseDuration: const Duration(seconds: 3),
-                );
-              }
-            },
-            builder: (context, state) {
-              return _buildContent(context, state, theme);
-            },
+          child: Padding(
+            padding: KPadding.horizontalSM,
+            child: BlocConsumer<ListaPrecioBloc, ListaPrecioState>(
+              listener: (context, state) {
+                if (state is ListaPrecioSuccess) {
+                  toastification.show(
+                    context: context,
+                    title: Text(state.message),
+                    type: ToastificationType.success,
+                    autoCloseDuration: const Duration(seconds: 3),
+                  );
+                } else if (state is ListaPrecioError) {
+                  toastification.show(
+                    context: context,
+                    title: Text(state.message),
+                    type: ToastificationType.error,
+                    autoCloseDuration: const Duration(seconds: 3),
+                  );
+                }
+              },
+              builder: (context, state) {
+                return _buildContent(context, state, theme);
+              },
+            ),
           ),
         ),
-        )
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, ListaPrecioState state, ThemeData theme) {
+  Widget _buildContent(
+    BuildContext context,
+    ListaPrecioState state,
+    ThemeData theme,
+  ) {
     if (state is ListaPrecioLoading) {
       return _buildLoadingState(theme);
     } else if (state is ListaPrecioLoaded) {
@@ -122,7 +122,11 @@ class ListaPrecioPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadedState(ListaPrecioLoaded state, ThemeData theme, BuildContext context) {
+  Widget _buildLoadedState(
+    ListaPrecioLoaded state,
+    ThemeData theme,
+    BuildContext context,
+  ) {
     if (state.listaPrecios.isEmpty) {
       return Card(
         elevation: 4,
@@ -157,7 +161,10 @@ class ListaPrecioPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ],
@@ -197,7 +204,10 @@ class ListaPrecioPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                   ),
                 ),
               ],
@@ -238,10 +248,11 @@ class ListaPrecioPage extends StatelessWidget {
                               children: [
                                 Text(
                                   '\$${listaPrecio.valor.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
-                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.primary,
-                                  ),
+                                  style: theme.textTheme.headlineSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.colorScheme.primary,
+                                      ),
                                 ),
                                 const SizedBox(height: 8),
                                 if (listaPrecio.tipoHospedaje != null) ...[
@@ -254,7 +265,8 @@ class ListaPrecioPage extends StatelessWidget {
                                   Text(
                                     listaPrecio.tipoHospedaje!.equipamiento,
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.7),
                                     ),
                                   ),
                                 ],
@@ -269,7 +281,8 @@ class ListaPrecioPage extends StatelessWidget {
                                   Text(
                                     listaPrecio.tipoPrecio!.observacion,
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.7),
                                     ),
                                   ),
                                 ],
@@ -280,13 +293,24 @@ class ListaPrecioPage extends StatelessWidget {
                           Column(
                             children: [
                               IconButton(
-                                onPressed: () => EditListaPrecioDialog.show(context, theme, listaPrecio),
+                                onPressed: () => EditListaPrecioDialog.show(
+                                  context,
+                                  theme,
+                                  listaPrecio,
+                                ),
                                 icon: Icon(Icons.edit, color: Colors.blue[600]),
                                 tooltip: 'Editar',
                               ),
                               IconButton(
-                                onPressed: () => DeleteListaPrecioDialog.show(context, theme, listaPrecio),
-                                icon: Icon(Icons.delete, color: Colors.red[600]),
+                                onPressed: () => DeleteListaPrecioDialog.show(
+                                  context,
+                                  theme,
+                                  listaPrecio,
+                                ),
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.red[600],
+                                ),
                                 tooltip: 'Eliminar',
                               ),
                             ],
@@ -304,24 +328,22 @@ class ListaPrecioPage extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorState(ListaPrecioError state, ThemeData theme, BuildContext context) {
+  Widget _buildErrorState(
+    ListaPrecioError state,
+    ThemeData theme,
+    BuildContext context,
+  ) {
     return Card(
       elevation: 4,
       color: theme.colorScheme.errorContainer,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 80, color: theme.colorScheme.error),
             const SizedBox(height: 24),
             Text(
               'Error al cargar las listas de precio',
@@ -402,7 +424,10 @@ class ListaPrecioPage extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
             ),
           ],
