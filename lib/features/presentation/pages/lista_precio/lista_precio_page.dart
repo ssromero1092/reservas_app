@@ -7,6 +7,7 @@ import 'package:reservas_app/features/presentation/blocs/lista_precio/lista_prec
 import 'package:reservas_app/features/presentation/pages/lista_precio/widgets/create_form.dart';
 import 'package:reservas_app/features/presentation/pages/lista_precio/widgets/delete_form.dart';
 import 'package:reservas_app/features/presentation/pages/lista_precio/widgets/edit_form.dart';
+import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
 class ListaPrecioPage extends StatelessWidget {
@@ -15,8 +16,9 @@ class ListaPrecioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    return Scaffold(
+    // BaseScaffold es un Scaffold personalizado que incluye una barra de navegación inferior.
+    final toastification = Toastification();
+    return BaseScaffold(
       appBar: AppBar(
         title: Row(
           children: [

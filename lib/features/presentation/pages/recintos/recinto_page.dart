@@ -7,6 +7,7 @@ import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.da
 import 'package:reservas_app/features/presentation/pages/recintos/widgets/create_form.dart';
 import 'package:reservas_app/features/presentation/pages/recintos/widgets/delete_form.dart';
 import 'package:reservas_app/features/presentation/pages/recintos/widgets/edit_form.dart';
+import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
 class RecintoPage extends StatelessWidget {
@@ -16,7 +17,7 @@ class RecintoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
+    return BaseScaffold(
       appBar: AppBar(
         title: Row(
           children: [

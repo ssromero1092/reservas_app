@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
+import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
 class HomePage extends StatelessWidget {
@@ -34,7 +35,7 @@ class HomePage extends StatelessWidget {
           );
         }
       },
-      child: Scaffold(
+      child: BaseScaffold(
         appBar: AppBar(
           title: Row(
             children: [
@@ -249,11 +250,10 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
+                
                 
                 // Menú desplegable para maestros
                 _buildMasterDropdown(context),
-                const SizedBox(height: 10),
 
 
 
