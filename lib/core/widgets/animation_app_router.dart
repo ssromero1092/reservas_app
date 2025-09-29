@@ -212,7 +212,7 @@ class AppAnimationTransitions {
         // Color que cambia dinámicamente durante la animación
         final hue = Tween<double>(
           begin: 240, // Azul inicial
-          end: 210,   // Azul más vivo/cian
+          end: 200,   // Azul más vivo/cian
         ).animate(colorCurve).value;
 
         // Efecto de desenfoque que disminuye gradualmente
@@ -279,8 +279,8 @@ class AppAnimationTransitions {
         left: MediaQuery.of(context).size.width / 2 + x,
         top: MediaQuery.of(context).size.height / 2 + y,
         child: Container(
-          width: 4,  // Partículas pequeñas
-          height: 4,
+          width: 5,  // Partículas pequeñas
+          height: 5,
           decoration: BoxDecoration(
             // Cada partícula tiene un color diferente basado en su posición
             color: HSVColor.fromAHSV(
