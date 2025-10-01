@@ -16,11 +16,32 @@ class ListaPrecioLoading extends ListaPrecioState {}
 /// Lista cargada con éxito
 class ListaPrecioLoaded extends ListaPrecioState {
   final List<ListaPrecio> listaPrecios;
+  final List<ListaPrecio> filteredListaPrecios;
+  final String searchQuery;
 
-  const ListaPrecioLoaded(this.listaPrecios);
+  const ListaPrecioLoaded(
+    this.listaPrecios, {
+    this.filteredListaPrecios = const [],
+    this.searchQuery = '',
+  });
+
+  ListaPrecioLoaded copyWith({
+    List<ListaPrecio>? listaPrecios,
+    List<ListaPrecio>? filteredListaPrecios,
+    String? searchQuery,
+  }) {
+    return ListaPrecioLoaded(
+      listaPrecios ?? this.listaPrecios,
+      filteredListaPrecios: filteredListaPrecios ?? this.filteredListaPrecios,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
+
+  List<ListaPrecio> get displayList =>
+  searchQuery.isEmpty ? listaPrecios : filteredListaPrecios;
 
   @override
-  List<Object?> get props => [listaPrecios];
+  List<Object?> get props => [listaPrecios, filteredListaPrecios, searchQuery];
 }
 
 /// Operación exitosa sin datos adicionales (ej. delete, update)

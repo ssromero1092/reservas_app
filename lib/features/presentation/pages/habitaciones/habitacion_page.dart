@@ -7,16 +7,38 @@ import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_b
 import 'package:reservas_app/features/presentation/pages/habitaciones/widgets/create_form.dart';
 import 'package:reservas_app/features/presentation/pages/habitaciones/widgets/delete_form.dart';
 import 'package:reservas_app/features/presentation/pages/habitaciones/widgets/edit_form.dart';
+import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
-class HabitacionPage extends StatelessWidget {
+class HabitacionPage extends StatefulWidget {
   const HabitacionPage({super.key});
+  @override
+  State<HabitacionPage> createState() => _HabitacionPageState();
+}
+
+class _HabitacionPageState extends State<HabitacionPage> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<HabitacionBloc>().add(const LoadHabitaciones());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final toastification = Toastification();
 
-    return Scaffold(
+    return BaseScaffold(
       appBar: AppBar(
         title: Row(
           children: [
@@ -41,10 +63,7 @@ class HabitacionPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              theme.colorScheme.primary.withOpacity(0.1),
-              Colors.white,
-            ],
+            colors: [theme.colorScheme.primary.withOpacity(0.1), Colors.white],
           ),
         ),
         child: SafeArea(
@@ -55,18 +74,16 @@ class HabitacionPage extends StatelessWidget {
                 if (state is HabitacionSuccess) {
                   toastification.show(
                     context: context,
-                    title: const Text('¡Éxito!'),
-                    description: Text(state.message),
+                    title: Text(state.message),
                     type: ToastificationType.success,
                     autoCloseDuration: const Duration(seconds: 3),
                   );
                 } else if (state is HabitacionError) {
                   toastification.show(
                     context: context,
-                    title: const Text('Error'),
-                    description: Text(state.message),
+                    title: Text(state.message),
                     type: ToastificationType.error,
-                    autoCloseDuration: const Duration(seconds: 5),
+                    autoCloseDuration: const Duration(seconds: 3),
                   );
                 }
               },
@@ -80,7 +97,11 @@ class HabitacionPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, HabitacionState state, ThemeData theme) {
+  Widget _buildContent(
+    BuildContext context,
+    HabitacionState state,
+    ThemeData theme,
+  ) {
     if (state is HabitacionLoading) {
       return _buildLoadingState(theme);
     } else if (state is HabitacionLoaded) {
@@ -90,6 +111,71 @@ class HabitacionPage extends StatelessWidget {
     } else {
       return _buildInitialState(theme, context);
     }
+  }
+
+  Widget _buildSearchField(ThemeData theme) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: _searchController,
+        focusNode: _searchFocusNode,
+        decoration: InputDecoration(
+          hintText: 'Buscar por descripción, capacidad, recinto...',
+          hintStyle: TextStyle(
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            size: 20,
+          ),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(
+                    Icons.clear,
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    size: 18,
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    context.read<HabitacionBloc>().add(const SearchHabitaciones(''));
+                    setState(() {});
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: theme.colorScheme.surface.withOpacity(0.7),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: theme.colorScheme.primary.withOpacity(0.5),
+              width: 1.5,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 12,
+          ),
+        ),
+        style: const TextStyle(fontSize: 14),
+        onChanged: (value) {
+          context.read<HabitacionBloc>().add(SearchHabitaciones(value));
+          setState(() {});
+        },
+      ),
+    );
   }
 
   Widget _buildLoadingState(ThemeData theme) {
@@ -167,6 +253,9 @@ class HabitacionPage extends StatelessWidget {
       );
     }
 
+    final displayList = state.displayList;
+    final showingFiltered = state.searchQuery.isNotEmpty;
+
     return Card(
       elevation: 4,
       child: Column(
@@ -182,110 +271,178 @@ class HabitacionPage extends StatelessWidget {
                 topRight: Radius.circular(12),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                Text(
-                  'Habitaciones (${state.habitaciones.length})',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            showingFiltered 
+                                ? 'Resultados (${displayList.length} de ${state.habitaciones.length})'
+                                : 'Habitaciones (${state.habitaciones.length})',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          if (showingFiltered)
+                            Text(
+                              'Buscando: "${state.searchQuery}"',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary.withOpacity(0.7),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () => CreateHabitacionDialog.show(context, theme),
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Nuevo'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      ),
+                    ),
+                  ],
                 ),
-                ElevatedButton.icon(
-                  onPressed: () => CreateHabitacionDialog.show(context, theme),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Nuevo'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                ),
+                const SizedBox(height: 16),
+                _buildSearchField(theme),
               ],
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.habitaciones.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final habitacion = state.habitaciones[index];
-                return Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  habitacion.descripcion,
-                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Capacidad: ${habitacion.capacidad}',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  'Recinto: ${habitacion.recinto?.descripcion ?? "ID: ${habitacion.idRecinto}"}',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text('ID: ${habitacion.idHabitacion}'),
-                              ],
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<HabitacionBloc>().add(const LoadHabitaciones());
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+              color: theme.colorScheme.primary,
+              backgroundColor: Colors.white,
+              child: displayList.isEmpty && showingFiltered
+                  ? _buildNoResultsFound(theme)
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: displayList.length,
+                      separatorBuilder: (context, index) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final habitacion = displayList[index];
+                        return Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: theme.colorScheme.outline.withOpacity(0.2),
                             ),
-                          ),
-                          Column(
-                            children: [
-                              IconButton(
-                                onPressed: () => EditHabitacionDialog.show(context, theme, habitacion),
-                                icon: Icon(Icons.edit, color: Colors.blue[600]),
-                                tooltip: 'Editar',
-                              ),
-                              IconButton(
-                                onPressed: () => DeleteHabitacionDialog.show(context, theme, habitacion),
-                                icon: Icon(Icons.delete, color: Colors.red[600]),
-                                tooltip: 'Eliminar',
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          habitacion.descripcion,
+                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Capacidad: ${habitacion.capacidad}',
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Recinto: ${habitacion.recinto?.descripcion ?? "ID: ${habitacion.idRecinto}"}',
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text('ID: ${habitacion.idHabitacion}'),
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () => EditHabitacionDialog.show(context, theme, habitacion),
+                                        icon: Icon(Icons.edit, color: Colors.blue[600]),
+                                        tooltip: 'Editar',
+                                      ),
+                                      IconButton(
+                                        onPressed: () => DeleteHabitacionDialog.show(context, theme, habitacion),
+                                        icon: Icon(Icons.delete, color: Colors.red[600]),
+                                        tooltip: 'Eliminar',
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNoResultsFound(ThemeData theme) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Container(
+        height: 400,
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 60,
+              color: theme.colorScheme.onSurface.withOpacity(0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No se encontraron resultados',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Intenta con otros términos de búsqueda',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.5),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

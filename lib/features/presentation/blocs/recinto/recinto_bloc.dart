@@ -29,6 +29,7 @@ class RecintoBloc extends Bloc<RecintoEvent, RecintoState> {
     on<AddRecinto>(_onAdd);
     on<UpdateRecinto>(_onUpdate);
     on<DeleteRecinto>(_onDelete);
+    on<SearchRecintos>(_onSearch);
   }
 
   Future<void> _onLoad(LoadRecintos e, Emitter<RecintoState> emit) async {
@@ -87,5 +88,39 @@ class RecintoBloc extends Bloc<RecintoEvent, RecintoState> {
     } catch (err) {
       emit(RecintoError(err.toString()));
     }
+  }
+
+  void _onSearch(SearchRecintos event, Emitter<RecintoState> emit) {
+    final currentState = state;
+    if (currentState is RecintoLoaded) {
+      if (event.query.isEmpty) {
+        emit(currentState.copyWith(
+          searchQuery: '',
+          filteredRecintos: [],
+        ));
+      } else {
+        final filtered = _filterRecintos(currentState.recintos, event.query);
+        emit(currentState.copyWith(
+          searchQuery: event.query,
+          filteredRecintos: filtered,
+        ));
+      }
+    }
+  }
+
+  List<Recinto> _filterRecintos(List<Recinto> recintos, String query) {
+    final lowercaseQuery = query.toLowerCase();
+
+    return recintos.where((recinto) {
+      // Buscar en descripcion
+      final descripcionMatch = recinto.descripcion.toLowerCase().contains(lowercaseQuery);
+
+      
+      // Buscar en ID
+      final idMatch = recinto.idRecinto.toString().contains(lowercaseQuery);
+
+      return descripcionMatch || 
+             idMatch;
+    }).toList();
   }
 }

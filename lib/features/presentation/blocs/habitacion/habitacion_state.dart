@@ -17,11 +17,32 @@ class HabitacionLoading extends HabitacionState {}
 /// Lista cargada con éxito
 class HabitacionLoaded extends HabitacionState {
   final List<Habitacion> habitaciones;
+  final List<Habitacion> filteredHabitaciones;
+  final String searchQuery;
 
-  const HabitacionLoaded(this.habitaciones);
+  const HabitacionLoaded(
+    this.habitaciones, {
+    this.filteredHabitaciones = const [],
+    this.searchQuery = '',
+  });
+
+  HabitacionLoaded copyWith({
+    List<Habitacion>? habitaciones,
+    List<Habitacion>? filteredHabitaciones,
+    String? searchQuery,
+  }) {
+    return HabitacionLoaded(
+      habitaciones ?? this.habitaciones,
+      filteredHabitaciones: filteredHabitaciones ?? this.filteredHabitaciones,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
+
+  List<Habitacion> get displayList =>
+      searchQuery.isEmpty ? habitaciones : filteredHabitaciones;
 
   @override
-  List<Object?> get props => [habitaciones];
+  List<Object?> get props => [habitaciones, filteredHabitaciones, searchQuery];
 }
 
 /// Operación exitosa sin datos adicionales (ej. delete, update)

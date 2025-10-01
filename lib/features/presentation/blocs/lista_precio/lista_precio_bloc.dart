@@ -29,6 +29,7 @@ class ListaPrecioBloc extends Bloc<ListaPrecioEvent, ListaPrecioState> {
     on<AddListaPrecio>(_onAdd);
     on<UpdateListaPrecio>(_onUpdate);
     on<DeleteListaPrecio>(_onDelete);
+    on<SearchListaPrecios>(_onSearch);
   }
 
   Future<void> _onLoad(LoadListaPrecios e, Emitter<ListaPrecioState> emit) async {
@@ -87,5 +88,54 @@ class ListaPrecioBloc extends Bloc<ListaPrecioEvent, ListaPrecioState> {
     } catch (err) {
       emit(ListaPrecioError(err.toString()));
     }
+  }
+
+  void _onSearch(SearchListaPrecios event, Emitter<ListaPrecioState> emit) {
+    final currentState = state;
+    if (currentState is ListaPrecioLoaded) {
+      if (event.query.isEmpty) {
+        emit(currentState.copyWith(
+          searchQuery: '',
+          filteredListaPrecios: [],
+        ));
+      } else {
+        final filtered = _filterListaPrecios(currentState.listaPrecios, event.query);
+        emit(currentState.copyWith(
+          searchQuery: event.query,
+          filteredListaPrecios: filtered,
+        ));
+      }
+    }
+  }
+
+  List<ListaPrecio> _filterListaPrecios(List<ListaPrecio> listaPrecios, String query) {
+    final lowercaseQuery = query.toLowerCase();
+    
+    return listaPrecios.where((listaPrecio) {
+      // Buscar en valor
+      final valorMatch = listaPrecio.valor.toString().contains(lowercaseQuery);
+      
+      // Buscar en tipo hospedaje
+      final tipoHospedajeMatch = listaPrecio.tipoHospedaje?.descripcion
+          .toLowerCase().contains(lowercaseQuery) ?? false;
+      final equipamientoMatch = listaPrecio.tipoHospedaje?.equipamiento
+          .toLowerCase().contains(lowercaseQuery) ?? false;
+      
+      // Buscar en tipo precio
+      final tipoPrecioMatch = listaPrecio.tipoPrecio?.descripcion
+          .toLowerCase().contains(lowercaseQuery) ?? false;
+      final observacionMatch = listaPrecio.tipoPrecio?.observacion
+          .toLowerCase().contains(lowercaseQuery) ?? false;
+      
+      // Buscar en ID
+      final idMatch = listaPrecio.idListaPrecio.toString().contains(lowercaseQuery);
+      
+      return valorMatch || 
+             tipoHospedajeMatch || 
+             equipamientoMatch || 
+             tipoPrecioMatch || 
+             observacionMatch || 
+             idMatch;
+    }).toList();
   }
 }

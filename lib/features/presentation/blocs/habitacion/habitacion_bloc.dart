@@ -29,6 +29,7 @@ class HabitacionBloc extends Bloc<HabitacionEvent, HabitacionState> {
     on<AddHabitacion>(_onAdd);
     on<UpdateHabitacion>(_onUpdate);
     on<DeleteHabitacion>(_onDelete);
+    on<SearchHabitaciones>(_onSearch);
   }
 
   Future<void> _onLoad(LoadHabitaciones e, Emitter<HabitacionState> emit) async {
@@ -87,5 +88,46 @@ class HabitacionBloc extends Bloc<HabitacionEvent, HabitacionState> {
     } catch (err) {
       emit(HabitacionError(err.toString()));
     }
+  }
+
+  void _onSearch(SearchHabitaciones event, Emitter<HabitacionState> emit) {
+    final currentState = state;
+    if (currentState is HabitacionLoaded) {
+      if (event.query.isEmpty) {
+        emit(currentState.copyWith(
+          searchQuery: '',
+          filteredHabitaciones: [],
+        ));
+      } else {
+        final filtered = _filterHabitaciones(currentState.habitaciones, event.query);
+        emit(currentState.copyWith(
+          searchQuery: event.query,
+          filteredHabitaciones: filtered,
+        ));
+      }
+    }
+  }
+
+  List<Habitacion> _filterHabitaciones(List<Habitacion> habitaciones, String query) {
+    final lowercaseQuery = query.toLowerCase();
+
+    return habitaciones.where((habitacion) {
+      // Buscar en descripcion
+      final descripcionMatch = habitacion.descripcion.toLowerCase().contains(lowercaseQuery);
+
+      // Buscar en capacidad
+      final capacidadMatch = habitacion.capacidad.toLowerCase().contains(lowercaseQuery);
+      
+      // Buscar en ID
+      final idMatch = habitacion.idHabitacion.toString().contains(lowercaseQuery);
+
+      // Buscar en recinto descripcion si está disponible
+      final recintoMatch = habitacion.recinto?.descripcion.toLowerCase().contains(lowercaseQuery) ?? false;
+
+      return descripcionMatch || 
+             capacidadMatch ||
+             idMatch ||
+             recintoMatch;
+    }).toList();
   }
 }

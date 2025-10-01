@@ -41,3 +41,13 @@ class DeleteTipoHospedaje extends TipoHospedajeEvent {
   @override
   List<Object?> get props => [id];
 }
+
+/// Buscar en la lista de tipos de hospedaje
+class SearchTipoHospedajes extends TipoHospedajeEvent {
+  final String query;
+
+  const SearchTipoHospedajes(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

@@ -42,3 +42,13 @@ class DeleteHabitacion extends HabitacionEvent {
   @override
   List<Object?> get props => [id];
 }
+
+/// Buscar en la lista de habitaciones
+class SearchHabitaciones extends HabitacionEvent {
+  final String query;
+
+  const SearchHabitaciones(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

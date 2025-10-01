@@ -10,14 +10,35 @@ import 'package:reservas_app/features/presentation/pages/lista_precio/widgets/ed
 import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
-class ListaPrecioPage extends StatelessWidget {
+class ListaPrecioPage extends StatefulWidget {
   const ListaPrecioPage({super.key});
+
+  @override
+  State<ListaPrecioPage> createState() => _ListaPrecioPageState();
+}
+
+class _ListaPrecioPageState extends State<ListaPrecioPage> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void initState(){
+    super.initState();
+    context.read<ListaPrecioBloc>().add(const LoadListaPrecios());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // BaseScaffold es un Scaffold personalizado que incluye una barra de navegación inferior.
     final toastification = Toastification();
+    
     return BaseScaffold(
       appBar: AppBar(
         title: Row(
@@ -91,6 +112,71 @@ class ListaPrecioPage extends StatelessWidget {
     } else {
       return _buildInitialState(theme, context);
     }
+  }
+
+  Widget _buildSearchField(ThemeData theme) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: _searchController,
+        focusNode: _searchFocusNode,
+        decoration: InputDecoration(
+          hintText: 'Buscar por precio, tipo hospedaje, tipo precio...',
+          hintStyle: TextStyle(
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            size: 20,
+          ),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(
+                    Icons.clear,
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    size: 18,
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    context.read<ListaPrecioBloc>().add(const SearchListaPrecios(''));
+                    setState(() {});
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: theme.colorScheme.surface.withOpacity(0.7),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: theme.colorScheme.primary.withOpacity(0.5),
+              width: 1.5,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 12,
+          ),
+        ),
+        style: const TextStyle(fontSize: 14),
+        onChanged: (value) {
+          context.read<ListaPrecioBloc>().add(SearchListaPrecios(value));
+          setState(() {});
+        },
+      ),
+    );
   }
 
   Widget _buildLoadingState(ThemeData theme) {
@@ -175,9 +261,13 @@ class ListaPrecioPage extends StatelessWidget {
       );
     }
 
+    final displayList = state.displayList;
+    final showingFiltered = state.searchQuery.isNotEmpty;
+
     return Card(
       elevation: 4,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             width: double.infinity,
@@ -189,141 +279,216 @@ class ListaPrecioPage extends StatelessWidget {
                 topRight: Radius.circular(12),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                Text(
-                  'Lista de Precios (${state.listaPrecios.length})',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => CreateListaPrecioDialog.show(context, theme),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Nuevo'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            showingFiltered 
+                                ? 'Resultados (${displayList.length} de ${state.listaPrecios.length})'
+                                : 'Lista de Precios (${state.listaPrecios.length})',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          if (showingFiltered)
+                            Text(
+                              'Buscando: "${state.searchQuery}"',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary.withOpacity(0.7),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
+                    ElevatedButton.icon(
+                      onPressed: () => CreateListaPrecioDialog.show(context, theme),
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Nuevo'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 16),
+                _buildSearchField(theme),
               ],
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.listaPrecios.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final listaPrecio = state.listaPrecios[index];
-                return Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '\$${listaPrecio.valor.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
-                                  style: theme.textTheme.headlineSmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.colorScheme.primary,
-                                      ),
-                                ),
-                                const SizedBox(height: 8),
-                                if (listaPrecio.tipoHospedaje != null) ...[
-                                  Text(
-                                    'Tipo Hospedaje: ${listaPrecio.tipoHospedaje!.descripcion}',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    listaPrecio.tipoHospedaje!.equipamiento,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface
-                                          .withOpacity(0.7),
-                                    ),
-                                  ),
-                                ],
-                                const SizedBox(height: 8),
-                                if (listaPrecio.tipoPrecio != null) ...[
-                                  Text(
-                                    'Tipo Precio: ${listaPrecio.tipoPrecio!.descripcion}',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    listaPrecio.tipoPrecio!.observacion,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface
-                                          .withOpacity(0.7),
-                                    ),
-                                  ),
-                                ],
-                                Text('id: ${listaPrecio.idListaPrecio}'),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              IconButton(
-                                onPressed: () => EditListaPrecioDialog.show(
-                                  context,
-                                  theme,
-                                  listaPrecio,
-                                ),
-                                icon: Icon(Icons.edit, color: Colors.blue[600]),
-                                tooltip: 'Editar',
-                              ),
-                              IconButton(
-                                onPressed: () => DeleteListaPrecioDialog.show(
-                                  context,
-                                  theme,
-                                  listaPrecio,
-                                ),
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.red[600],
-                                ),
-                                tooltip: 'Eliminar',
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<ListaPrecioBloc>().add(const LoadListaPrecios());
+                // Esperar un poco para que se complete la carga
+                await Future.delayed(const Duration(milliseconds: 500));
               },
+              color: theme.colorScheme.primary,
+              backgroundColor: Colors.white,
+              child: displayList.isEmpty && showingFiltered
+                  ? _buildNoResultsFound(theme)
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: displayList.length,
+                      separatorBuilder: (context, index) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final listaPrecio = displayList[index];
+                        return _buildListaPrecioCard(listaPrecio, theme, context);
+                      },
+                    ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoResultsFound(ThemeData theme) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Container(
+        height: 400, // Altura mínima para permitir el scroll
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 60,
+              color: theme.colorScheme.onSurface.withOpacity(0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No se encontraron resultados',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Intenta con otros términos de búsqueda',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.5),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListaPrecioCard(
+    dynamic listaPrecio,
+    ThemeData theme,
+    BuildContext context,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '\$${listaPrecio.valor.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
+                      style: theme.textTheme.headlineSmall
+                      ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    if (listaPrecio.tipoHospedaje != null) ...[
+                      Text(
+                        'Tipo Hospedaje: ${listaPrecio.tipoHospedaje!.descripcion}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        listaPrecio.tipoHospedaje!.equipamiento,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    if (listaPrecio.tipoPrecio != null) ...[
+                      Text(
+                        'Tipo Precio: ${listaPrecio.tipoPrecio!.descripcion}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        listaPrecio.tipoPrecio!.observacion,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                      ),
+                    ],
+                    Text('id: ${listaPrecio.idListaPrecio}'),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  IconButton(
+                    onPressed: () => EditListaPrecioDialog.show(
+                      context,
+                      theme,
+                      listaPrecio,
+                    ),
+                    icon: Icon(Icons.edit, color: Colors.blue[600]),
+                    tooltip: 'Editar',
+                  ),
+                  IconButton(
+                    onPressed: () => DeleteListaPrecioDialog.show(
+                      context,
+                      theme,
+                      listaPrecio,
+                    ),
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red[600],
+                    ),
+                    tooltip: 'Eliminar',
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

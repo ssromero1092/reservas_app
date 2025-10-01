@@ -1,6 +1,5 @@
 part of 'recinto_bloc.dart';
 
-
 abstract class RecintoEvent extends Equatable {
   const RecintoEvent();
 
@@ -41,4 +40,14 @@ class DeleteRecinto extends RecintoEvent {
 
   @override
   List<Object?> get props => [id];
+}
+
+/// Buscar en la lista de recintos
+class SearchRecintos extends RecintoEvent {
+  final String query;
+
+  const SearchRecintos(this.query);
+
+  @override
+  List<Object?> get props => [query];
 }

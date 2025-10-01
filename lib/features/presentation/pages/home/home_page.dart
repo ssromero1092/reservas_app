@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
-import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
 class HomePage extends StatelessWidget {
@@ -35,7 +34,7 @@ class HomePage extends StatelessWidget {
           );
         }
       },
-      child: BaseScaffold(
+      child: Scaffold(
         appBar: AppBar(
           title: Row(
             children: [
@@ -218,8 +217,8 @@ class HomePage extends StatelessWidget {
                   child: GridView.count(
                     crossAxisCount: 2,
                     mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 1.1,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 1,
                     physics: const BouncingScrollPhysics(),
                     children: [
                       _buildModuleCard(
@@ -228,7 +227,7 @@ class HomePage extends StatelessWidget {
                         title: 'Reservas',
                         subtitle: 'Gestionar reservas',
                         color: Colors.blue,
-                        onTap: () => context.go('/reservas'),
+                        onTap: () => context.push('/reservas'),
                       ),
                       _buildModuleCard(
                         context,
@@ -236,7 +235,7 @@ class HomePage extends StatelessWidget {
                         title: 'Alojamiento',
                         subtitle: 'Administrar hoteles',
                         color: Colors.green,
-                        onTap: () => context.go('/alojamiento'),
+                        onTap: () => context.push('/alojamiento'),
                       ),
                       /*
                       _buildModuleCard(
@@ -245,7 +244,7 @@ class HomePage extends StatelessWidget {
                         title: 'Recinto',
                         subtitle: 'Gestión de recintos',
                         color: Colors.orange,
-                        onTap: () => context.go('/recintos'),
+                        onTap: () => context.push('/recintos'),
                       ),*/
                     ],
                   ),
@@ -375,7 +374,7 @@ class HomePage extends StatelessWidget {
                       title: 'Recintos',
                       subtitle: 'Gestión de Recintos',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/recintos'),
+                      onTap: () => context.push('/recintos'),
                     ),
                     _buildMasterOption(
                       context,
@@ -383,7 +382,7 @@ class HomePage extends StatelessWidget {
                       title: 'Habitacion',
                       subtitle: 'Gestión de Habitaciones',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/habitaciones'),
+                      onTap: () => context.push('/habitaciones'),
                     ),
                     _buildMasterOption(
                       context,
@@ -391,7 +390,7 @@ class HomePage extends StatelessWidget {
                       title: 'Tipo Hospedaje',
                       subtitle: 'Gestión de Tipos de Hospedaje',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/tipos-hospedaje'),
+                      onTap: () => context.push('/tipos-hospedaje'),
                     ),
                     _buildMasterOption(
                       context,
@@ -399,8 +398,8 @@ class HomePage extends StatelessWidget {
                       title: 'Tipo Precio',
                       subtitle: 'Gestión de Tipos de Precio',
                       color: Colors.blueGrey[600]!,
-                      //onTap: () => context.go('/recintos'),
-                      onTap: () => context.go('/tipos-precio'),
+                      //onTap: () => context.push('/recintos'),
+                      onTap: () => context.push('/tipos-precio'),
                     ),
                     _buildMasterOption(
                       context,
@@ -408,7 +407,7 @@ class HomePage extends StatelessWidget {
                       title: 'Lista Precio',
                       subtitle: 'Gestión de Listas de Precio',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/listas-precio'),
+                      onTap: () => context.push('/listas-precio'),
                     ),            
                     _buildMasterOption(
                       context,
@@ -416,7 +415,7 @@ class HomePage extends StatelessWidget {
                       title: 'Servicio',
                       subtitle: 'Gestión de Servicios',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/categorias'),
+                      onTap: () => context.push('/categorias'),
                     ),
                     _buildMasterOption(
                       context,
@@ -424,7 +423,7 @@ class HomePage extends StatelessWidget {
                       title: 'Cliente',
                       subtitle: 'Gestión de Clientes',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.go('/categorias'),
+                      onTap: () => context.push('/categorias'),
                     ),
                   ],
                 ),

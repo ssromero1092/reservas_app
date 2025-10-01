@@ -41,3 +41,13 @@ class DeleteListaPrecio extends ListaPrecioEvent {
   @override
   List<Object?> get props => [id];
 }
+
+/// Buscar en la lista de precios
+class SearchListaPrecios extends ListaPrecioEvent {
+  final String query;
+
+  const SearchListaPrecios(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

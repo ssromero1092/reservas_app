@@ -29,6 +29,7 @@ class TipoPrecioBloc extends Bloc<TipoPrecioEvent, TipoPrecioState> {
     on<AddTipoPrecio>(_onAdd);
     on<UpdateTipoPrecio>(_onUpdate);
     on<DeleteTipoPrecio>(_onDelete);
+    on<SearchTipoPrecios>(_onSearch);
   }
 
   Future<void> _onLoad(LoadTipoPrecios event, Emitter<TipoPrecioState> emit) async {
@@ -83,5 +84,42 @@ class TipoPrecioBloc extends Bloc<TipoPrecioEvent, TipoPrecioState> {
     } catch (err) {
       emit(TipoPrecioError(err.toString()));
     }
+  }
+
+  void _onSearch(SearchTipoPrecios event, Emitter<TipoPrecioState> emit) {
+    final currentState = state;
+    if (currentState is TipoPrecioLoaded) {
+      if (event.query.isEmpty) {
+        emit(currentState.copyWith(
+          searchQuery: '',
+          filteredTipoPrecios: [],
+        ));
+      } else {
+        final filtered = _filterTipoPrecios(currentState.tipoPrecios, event.query);
+        emit(currentState.copyWith(
+          searchQuery: event.query,
+          filteredTipoPrecios: filtered,
+        ));
+      }
+    }
+  }
+
+  List<TipoPrecio> _filterTipoPrecios(List<TipoPrecio> tipoPrecios, String query) {
+    final lowercaseQuery = query.toLowerCase();
+
+    return tipoPrecios.where((tipoPrecio) {
+      // Buscar en descripcion
+      final descripcionMatch = tipoPrecio.descripcion.toLowerCase().contains(lowercaseQuery);
+
+      // Buscar en observacion
+      final observacionMatch = tipoPrecio.observacion.toLowerCase().contains(lowercaseQuery);
+      
+      // Buscar en ID
+      final idMatch = tipoPrecio.idTipoPrecio.toString().contains(lowercaseQuery);
+
+      return descripcionMatch || 
+             observacionMatch ||
+             idMatch;
+    }).toList();
   }
 }

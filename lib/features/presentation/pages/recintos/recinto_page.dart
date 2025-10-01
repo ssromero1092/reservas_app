@@ -10,12 +10,33 @@ import 'package:reservas_app/features/presentation/pages/recintos/widgets/edit_f
 import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
-class RecintoPage extends StatelessWidget {
+class RecintoPage extends StatefulWidget {
   const RecintoPage({super.key});
+  @override
+  State<RecintoPage> createState() => _RecintoPageState();
+}
+
+class _RecintoPageState extends State<RecintoPage> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<RecintoBloc>().add(const LoadRecintos());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final toastification = Toastification();
 
     return BaseScaffold(
       appBar: AppBar(
@@ -42,10 +63,7 @@ class RecintoPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              theme.colorScheme.primary.withOpacity(0.1),
-              Colors.white,
-            ],
+            colors: [theme.colorScheme.primary.withOpacity(0.1), Colors.white],
           ),
         ),
         child: SafeArea(
@@ -93,6 +111,71 @@ class RecintoPage extends StatelessWidget {
     } else {
       return _buildInitialState(theme, context);
     }
+  }
+
+  Widget _buildSearchField(ThemeData theme) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: _searchController,
+        focusNode: _searchFocusNode,
+        decoration: InputDecoration(
+          hintText: 'Buscar por precio, tipo hospedaje, tipo precio...',
+          hintStyle: TextStyle(
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            size: 20,
+          ),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(
+                    Icons.clear,
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    size: 18,
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    context.read<RecintoBloc>().add(const SearchRecintos(''));
+                    setState(() {});
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: theme.colorScheme.surface.withOpacity(0.7),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: theme.colorScheme.primary.withOpacity(0.5),
+              width: 1.5,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 12,
+          ),
+        ),
+        style: const TextStyle(fontSize: 14),
+        onChanged: (value) {
+          context.read<RecintoBloc>().add(SearchRecintos(value));
+          setState(() {});
+        },
+      ),
+    );
   }
 
   Widget _buildLoadingState(ThemeData theme) {
@@ -165,7 +248,10 @@ class RecintoPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ],
@@ -173,6 +259,9 @@ class RecintoPage extends StatelessWidget {
         ),
       );
     }
+
+    final displayList = state.displayList;
+    final showingFiltered = state.searchQuery.isNotEmpty;
 
     return Card(
       elevation: 4,
@@ -189,36 +278,122 @@ class RecintoPage extends StatelessWidget {
                 topRight: Radius.circular(12),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                Text(
-                  'Recintos (${state.recintos.length})',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                            showingFiltered 
+                                ? 'Resultados (${displayList.length} de ${state.recintos.length})'
+                                : 'Recintos (${state.recintos.length})',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          if (showingFiltered)
+                            Text(
+                              'Buscando: "${state.searchQuery}"',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary.withOpacity(0.7),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () => CreateRecintoDialog.show(context, theme),
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Nuevo'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                ElevatedButton.icon(
-                  onPressed: () => CreateRecintoDialog.show(context, theme),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Nuevo'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                ),
+                const SizedBox(height: 16),
+                _buildSearchField(theme),
               ],
             ),
           ),
           Expanded(
-            child: ListView.separated(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<RecintoBloc>().add(const LoadRecintos());
+                // Esperar un poco para que se complete la carga
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+              color: theme.colorScheme.primary,
+              backgroundColor: Colors.white,
+              child: displayList.isEmpty && showingFiltered
+                  ? _buildNoResultsFound(theme)
+                  : ListView.separated(
               padding: const EdgeInsets.all(16),
-              itemCount: state.recintos.length,
+              itemCount: displayList.length,
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                final recinto = state.recintos[index];
+                final recinto = displayList[index];
+                        return _buildListaPrecioCard(recinto, theme, context);
+                      },
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoResultsFound(ThemeData theme) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Container(
+        height: 400, // Altura mínima para permitir el scroll
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.search_off,
+              size: 60,
+              color: theme.colorScheme.onSurface.withOpacity(0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No se encontraron resultados',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Intenta con otros términos de búsqueda',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.5),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListaPrecioCard(
+    dynamic recinto,
+    ThemeData theme,
+    BuildContext context,
+  ) {
                 return Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -247,7 +422,8 @@ class RecintoPage extends StatelessWidget {
                               children: [
                                 Text(
                                   recinto.descripcion,
-                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                  style: theme.textTheme.headlineSmall
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: theme.colorScheme.primary,
                                   ),
@@ -260,12 +436,20 @@ class RecintoPage extends StatelessWidget {
                           Column(
                             children: [
                               IconButton(
-                                onPressed: () => EditRecientoDialog.show(context, theme, recinto),
+                    onPressed: () => EditRecientoDialog.show(
+                      context,
+                      theme,
+                      recinto,
+                    ),
                                 icon: Icon(Icons.edit, color: Colors.blue[600]),
                                 tooltip: 'Editar',
                               ),
                               IconButton(
-                                onPressed: () => DeleteRecintoDialog.show(context, theme, recinto),
+                                onPressed: () => DeleteRecintoDialog.show(
+                                  context,
+                                  theme,
+                                  recinto,
+                                ),
                                 icon: Icon(Icons.delete, color: Colors.red[600]),
                                 tooltip: 'Eliminar',
                               ),
@@ -276,12 +460,6 @@ class RecintoPage extends StatelessWidget {
                     ],
                   ),
                 );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildErrorState(
@@ -295,17 +473,11 @@ class RecintoPage extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 80, color: theme.colorScheme.error),
             const SizedBox(height: 24),
             Text(
               'Error al cargar los recintos',
@@ -386,7 +558,10 @@ class RecintoPage extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
             ),
           ],
@@ -394,5 +569,4 @@ class RecintoPage extends StatelessWidget {
       ),
     );
   }
-
 }

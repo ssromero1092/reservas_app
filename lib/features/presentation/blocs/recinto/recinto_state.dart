@@ -16,11 +16,32 @@ class RecintoLoading extends RecintoState {}
 /// Lista cargada con éxito
 class RecintoLoaded extends RecintoState {
   final List<Recinto> recintos;
+  final List<Recinto> filteredRecintos;
+  final String searchQuery;
 
-  const RecintoLoaded(this.recintos);
+  const RecintoLoaded(
+    this.recintos, {
+    this.filteredRecintos = const [],
+    this.searchQuery = '',
+  });
+
+  RecintoLoaded copyWith({
+    List<Recinto>? recintos,
+    List<Recinto>? filteredRecintos,
+    String? searchQuery,
+  }) {
+    return RecintoLoaded(
+      recintos ?? this.recintos,
+      filteredRecintos: filteredRecintos ?? this.filteredRecintos,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
+
+  List<Recinto> get displayList =>
+      searchQuery.isEmpty ? recintos : filteredRecintos;
 
   @override
-  List<Object?> get props => [recintos];
+  List<Object?> get props => [recintos, filteredRecintos, searchQuery];
 }
 
 /// Operación exitosa sin datos adicionales (ej. delete, update)

@@ -29,6 +29,7 @@ class TipoHospedajeBloc extends Bloc<TipoHospedajeEvent, TipoHospedajeState> {
     on<AddTipoHospedaje>(_onAdd);
     on<UpdateTipoHospedaje>(_onUpdate);
     on<DeleteTipoHospedaje>(_onDelete);
+    on<SearchTipoHospedajes>(_onSearch);
   }
 
   Future<void> _onLoad(LoadTipoHospedajes e, Emitter<TipoHospedajeState> emit) async {
@@ -87,5 +88,42 @@ class TipoHospedajeBloc extends Bloc<TipoHospedajeEvent, TipoHospedajeState> {
     } catch (err) {
       emit(TipoHospedajeError(err.toString()));
     }
+  }
+
+  void _onSearch(SearchTipoHospedajes event, Emitter<TipoHospedajeState> emit) {
+    final currentState = state;
+    if (currentState is TipoHospedajeLoaded) {
+      if (event.query.isEmpty) {
+        emit(currentState.copyWith(
+          searchQuery: '',
+          filteredTipoHospedajes: [],
+        ));
+      } else {
+        final filtered = _filterTipoHospedajes(currentState.tipoHospedajes, event.query);
+        emit(currentState.copyWith(
+          searchQuery: event.query,
+          filteredTipoHospedajes: filtered,
+        ));
+      }
+    }
+  }
+
+  List<TipoHospedaje> _filterTipoHospedajes(List<TipoHospedaje> tipoHospedajes, String query) {
+    final lowercaseQuery = query.toLowerCase();
+
+    return tipoHospedajes.where((tipoHospedaje) {
+      // Buscar en descripcion
+      final descripcionMatch = tipoHospedaje.descripcion.toLowerCase().contains(lowercaseQuery);
+
+      // Buscar en equipamiento
+      final equipamientoMatch = tipoHospedaje.equipamiento.toLowerCase().contains(lowercaseQuery);
+      
+      // Buscar en ID
+      final idMatch = tipoHospedaje.idTipoHospedaje.toString().contains(lowercaseQuery);
+
+      return descripcionMatch || 
+             equipamientoMatch ||
+             idMatch;
+    }).toList();
   }
 }

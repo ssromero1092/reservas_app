@@ -37,3 +37,13 @@ class DeleteTipoPrecio extends TipoPrecioEvent {
   @override
   List<Object?> get props => [id];
 }
+
+/// Buscar en la lista de tipos de precio
+class SearchTipoPrecios extends TipoPrecioEvent {
+  final String query;
+
+  const SearchTipoPrecios(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

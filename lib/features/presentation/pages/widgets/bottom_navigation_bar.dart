@@ -9,7 +9,9 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 80,
       decoration: BoxDecoration(
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -18,51 +20,59 @@ class CustomBottomNavBar extends StatelessWidget {
           ),
         ],
       ),
-      child: BottomNavigationBar(
-        currentIndex: _getCurrentIndex(currentPath),
-        onTap: (index) => _onItemTapped(context, index),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        selectedFontSize: 12,
-        unselectedFontSize: 11,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            activeIcon: Icon(Icons.home),
-            label: 'Inicio',
+      child: Center(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => context.go('/home'),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: _isCurrentPath('/home') 
+                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                border: _isCurrentPath('/home')
+                    ? Border.all(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                        width: 1,
+                      )
+                    : null,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _isCurrentPath('/home') ? Icons.home : Icons.home_rounded,
+                    color: _isCurrentPath('/home')
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.primaryContainer,
+                    size: 24,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Inicio',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _isCurrentPath('/home')
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.primaryContainer,
+                      fontWeight: _isCurrentPath('/home')
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_rounded),
-            activeIcon: Icon(Icons.calendar_today),
-            label: 'Recinto',
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  int _getCurrentIndex(String path) {
-    switch (path) {
-      case '/home':
-        return 0;
-      case '/listas-precio':
-        return 1;
-      default:
-        return 0;
-    }
-  }
-
-  void _onItemTapped(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        context.go('/home');
-        break;
-      case 1:
-        context.go('/listas-precio');
-        break;
-    }
+  bool _isCurrentPath(String path) {
+    return currentPath == path;
   }
 }
