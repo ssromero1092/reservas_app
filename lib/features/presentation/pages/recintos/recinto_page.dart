@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reservas_app/core/constants/k_padding.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
-import 'package:reservas_app/features/presentation/pages/recintos/widgets/create_form.dart';
-import 'package:reservas_app/features/presentation/pages/recintos/widgets/delete_form.dart';
-import 'package:reservas_app/features/presentation/pages/recintos/widgets/edit_form.dart';
+import 'package:reservas_app/features/presentation/pages/recintos/widgets/recinto_create_form.dart';
+import 'package:reservas_app/features/presentation/pages/recintos/widgets/recinto_delete_form.dart';
+import 'package:reservas_app/features/presentation/pages/recintos/widgets/recinto_edit_form.dart';
 import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:toastification/toastification.dart';
 
