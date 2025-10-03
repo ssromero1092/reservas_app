@@ -8,6 +8,7 @@ import 'package:reservas_app/features/presentation/pages/recintos/widgets/recint
 import 'package:reservas_app/features/presentation/pages/recintos/widgets/recinto_delete_form.dart';
 import 'package:reservas_app/features/presentation/pages/recintos/widgets/recinto_edit_form.dart';
 import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
+import 'package:reservas_app/features/presentation/pages/widgets/error_state_widget.dart';
 import 'package:toastification/toastification.dart';
 
 class RecintoPage extends StatefulWidget {
@@ -467,49 +468,11 @@ class _RecintoPageState extends State<RecintoPage> {
     ThemeData theme,
     BuildContext context,
   ) {
-    return Card(
-      elevation: 4,
-      color: theme.colorScheme.errorContainer,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 80, color: theme.colorScheme.error),
-            const SizedBox(height: 24),
-            Text(
-              'Error al cargar los recintos',
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.error,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              state.message,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.error,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                context.read<RecintoBloc>().add(const LoadRecintos());
-              },
-              icon: const Icon(Icons.refresh),
-              label: const Text('Reintentar'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.error,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ErrorStateWidget.recintos(
+      message: state.message,
+      onRetry: () {
+        context.read<RecintoBloc>().add(const LoadRecintos());
+      },
     );
   }
 

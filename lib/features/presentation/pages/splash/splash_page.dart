@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
+import 'package:reservas_app/features/presentation/widgets/animations/splash_animation_widget.dart';
 
+/// Página de splash que maneja la lógica de navegación
+/// mientras usa el widget de animación reutilizable
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -12,7 +14,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  static const Duration _minSplashDuration = Duration(seconds: 2); // Duración mínima del splash
+  static const Duration _minSplashDuration = Duration(seconds: 2);
   DateTime? _splashStartTime;
   AuthState? _pendingAuthState;
 
@@ -24,17 +26,15 @@ class _SplashPageState extends State<SplashPage> {
 
   void _handleAuthStateChange(AuthState state) {
     _pendingAuthState = state;
-    
+
     final elapsedTime = DateTime.now().difference(_splashStartTime!);
     final remainingTime = _minSplashDuration - elapsedTime;
 
     if (remainingTime > Duration.zero) {
-      // Si no ha pasado el tiempo mínimo, esperamos
       Future.delayed(remainingTime, () {
         _navigateToNextScreen();
       });
     } else {
-      // Si ya pasó el tiempo mínimo, navegamos inmediatamente
       _navigateToNextScreen();
     }
   }
@@ -49,67 +49,33 @@ class _SplashPageState extends State<SplashPage> {
     }
   }
 
+  void _onAnimationComplete() {
+    // Opcional: realizar alguna acción cuando la animación termina
+    // Por ejemplo, forzar la navegación si ya pasó el tiempo mínimo
+    if (_pendingAuthState != null) {
+      final elapsedTime = DateTime.now().difference(_splashStartTime!);
+      if (elapsedTime >= _minSplashDuration) {
+        _navigateToNextScreen();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              theme.colorScheme.primary,
-              theme.colorScheme.primary.withOpacity(0.8),
-            ],
-          ),
-        ),
-        child: BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
-            _handleAuthStateChange(state);
-          },
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.hotel_rounded,
-                    size: 80,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Text(
-                  'Sistema de Reservas',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Cargando...',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withOpacity(0.8),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                LoadingAnimationWidget.staggeredDotsWave(
-                  color: Colors.white,
-                  size: 50,
-                ),
-              ],
-            ),
-          ),
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          _handleAuthStateChange(state);
+        },
+        child: SplashAnimationWidget(
+          title: 'Sistema de Reservas',
+          subtitle: 'Gestión Hotelera Profesional',
+          icon: Icons.hotel_rounded,
+          iconSize: 90,
+          loadingMessage: 'Inicializando sistema...',
+          showLoading: true,
+          animationDuration: const Duration(milliseconds: 2200),
+          onAnimationComplete: _onAnimationComplete,
         ),
       ),
     );

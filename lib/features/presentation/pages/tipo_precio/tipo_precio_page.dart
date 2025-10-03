@@ -8,6 +8,7 @@ import 'package:reservas_app/features/presentation/pages/tipo_precio/widgets/tip
 import 'package:reservas_app/features/presentation/pages/tipo_precio/widgets/tipo_precio_delete_form.dart';
 import 'package:reservas_app/features/presentation/pages/tipo_precio/widgets/tipo_precio_edit_form.dart';
 import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
+import 'package:reservas_app/features/presentation/pages/widgets/error_state_widget.dart';
 import 'package:toastification/toastification.dart';
 
 class TipoPrecioPage extends StatefulWidget {
@@ -444,55 +445,11 @@ class _TipoPrecioPageState extends State<TipoPrecioPage> {
   }
 
   Widget _buildErrorState(TipoPrecioError state, ThemeData theme, BuildContext context) {
-    return Card(
-      elevation: 4,
-      color: theme.colorScheme.errorContainer,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: theme.colorScheme.error,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Error al cargar tipos de precio',
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.error,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              state.message,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.error,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                context.read<TipoPrecioBloc>().add(const LoadTipoPrecios());
-              },
-              icon: const Icon(Icons.refresh),
-              label: const Text('Reintentar'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.error,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ErrorStateWidget.tiposPrecios(
+      message: state.message,
+      onRetry: () {
+        context.read<TipoPrecioBloc>().add(const LoadTipoPrecios());
+      },
     );
   }
 
