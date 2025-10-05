@@ -6,6 +6,7 @@ import 'package:reservas_app/features/presentation/blocs/lista_precio/lista_prec
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/recinto/recinto_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/reservas/reservas_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/servicio/servicio_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/tipo_hospedaje/tipo_hospedaje_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/tipo_precio/tipo_precio_bloc.dart';
 
@@ -35,6 +36,9 @@ class BlocProviders {
     ),
     BlocProvider<ListaPrecioBloc>(
       create: (context) => GetIt.instance.get<ListaPrecioBloc>(),
+    ),
+    BlocProvider<ServicioBloc>(
+      create: (context) => GetIt.instance.get<ServicioBloc>(),
     ),
   ];
 }

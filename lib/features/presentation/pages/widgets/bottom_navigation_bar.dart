@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reservas_app/core/constants/app_routes.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   const CustomBottomNavBar({super.key, required this.currentPath});
@@ -24,16 +25,16 @@ class CustomBottomNavBar extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => context.go('/home'),
+            onTap: () => context.go(AppRoutes.home),
             borderRadius: BorderRadius.circular(20),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: _isCurrentPath('/home') 
+                color: _isCurrentPath(AppRoutes.home) 
                     ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
-                border: _isCurrentPath('/home')
+                border: _isCurrentPath(AppRoutes.home)
                     ? Border.all(
                         color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                         width: 1,
@@ -44,8 +45,8 @@ class CustomBottomNavBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    _isCurrentPath('/home') ? Icons.home : Icons.home_rounded,
-                    color: _isCurrentPath('/home')
+                    _isCurrentPath(AppRoutes.home) ? Icons.home : Icons.home_rounded,
+                    color: _isCurrentPath(AppRoutes.home)
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.primaryContainer,
                     size: 24,
@@ -55,10 +56,10 @@ class CustomBottomNavBar extends StatelessWidget {
                     'Inicio',
                     style: TextStyle(
                       fontSize: 12,
-                      color: _isCurrentPath('/home')
+                      color: _isCurrentPath(AppRoutes.home)
                           ? Theme.of(context).colorScheme.primary
                           : Theme.of(context).colorScheme.primaryContainer,
-                      fontWeight: _isCurrentPath('/home')
+                      fontWeight: _isCurrentPath(AppRoutes.home)
                           ? FontWeight.w600
                           : FontWeight.normal,
                     ),

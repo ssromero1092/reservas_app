@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reservas_app/core/constants/app_routes.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
 import 'package:reservas_app/features/presentation/widgets/animations/splash_animation_widget.dart';
 
@@ -43,7 +44,7 @@ class _SplashPageState extends State<SplashPage> {
     if (!mounted || _pendingAuthState == null) return;
 
     if (_pendingAuthState is AuthAuthenticated) {
-      context.go('/home');
+      context.go(AppRoutes.home);
     } else if (_pendingAuthState is AuthUnauthenticated) {
       context.go('/login');
     }

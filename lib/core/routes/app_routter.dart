@@ -7,6 +7,7 @@ import 'package:reservas_app/features/presentation/pages/lista_precio/lista_prec
 import 'package:reservas_app/features/presentation/pages/login/login_page.dart';
 import 'package:reservas_app/features/presentation/pages/recintos/recinto_page.dart';
 import 'package:reservas_app/features/presentation/pages/reservas/reservas_page.dart';
+import 'package:reservas_app/features/presentation/pages/servicio/servicio_page.dart';
 import 'package:reservas_app/features/presentation/pages/splash/splash_page.dart';
 import 'package:reservas_app/features/presentation/pages/tipo_hospedaje/tipo_hospedaje_page.dart';
 import 'package:reservas_app/features/presentation/pages/tipo_precio/tipo_precio_page.dart';
@@ -81,6 +82,13 @@ class AppRouter {
         name: 'tipos-precio',
         pageBuilder: (context, state) {
           return AppAnimationTransitions.morphingPortalTransition(const TipoPrecioPage(), state);
+        },
+      ),
+      GoRoute(
+        path: '/servicios',
+        name: 'servicios',
+        pageBuilder: (context, state) {
+          return AppAnimationTransitions.morphingPortalTransition(const ServicioPage(), state);
         },
       ),
       GoRoute(

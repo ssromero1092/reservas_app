@@ -4,29 +4,28 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reservas_app/core/constants/app_routes.dart';
 import 'package:reservas_app/core/constants/k_padding.dart';
-import 'package:reservas_app/features/presentation/blocs/lista_precio/lista_precio_bloc.dart';
-import 'package:reservas_app/features/presentation/pages/lista_precio/widgets/lista_precio_create_form.dart';
-import 'package:reservas_app/features/presentation/pages/lista_precio/widgets/lista_precio_delete_form.dart';
-import 'package:reservas_app/features/presentation/pages/lista_precio/widgets/lista_precio_edit_form.dart';
+import 'package:reservas_app/features/presentation/blocs/servicio/servicio_bloc.dart';
+import 'package:reservas_app/features/presentation/pages/servicio/widgets/servicio_create_form.dart';
+import 'package:reservas_app/features/presentation/pages/servicio/widgets/servicio_delete_form.dart';
+import 'package:reservas_app/features/presentation/pages/servicio/widgets/servicio_edit_form.dart';
 import 'package:reservas_app/features/presentation/pages/widgets/base_scaffold.dart';
 import 'package:reservas_app/features/presentation/pages/widgets/error_state_widget.dart';
 import 'package:toastification/toastification.dart';
 
-class ListaPrecioPage extends StatefulWidget {
-  const ListaPrecioPage({super.key});
-
+class ServicioPage extends StatefulWidget {
+  const ServicioPage({super.key});
   @override
-  State<ListaPrecioPage> createState() => _ListaPrecioPageState();
+  State<ServicioPage> createState() => _ServicioPageState();
 }
 
-class _ListaPrecioPageState extends State<ListaPrecioPage> {
+class _ServicioPageState extends State<ServicioPage> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    context.read<ListaPrecioBloc>().add(const LoadListaPrecios());
+    context.read<ServicioBloc>().add(const LoadServicios());
   }
 
   @override
@@ -40,14 +39,14 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final toastification = Toastification();
-    
+
     return BaseScaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.price_change, color: Colors.white),
+            Icon(Icons.room_service, color: Colors.white),
             const SizedBox(width: 8),
-            const Text('Lista de Precios'),
+            const Text('Gestión de Servicios'),
           ],
         ),
         backgroundColor: theme.colorScheme.primary,
@@ -72,16 +71,16 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
         child: SafeArea(
           child: Padding(
             padding: KPadding.horizontalSM,
-            child: BlocConsumer<ListaPrecioBloc, ListaPrecioState>(
+            child: BlocConsumer<ServicioBloc, ServicioState>(
               listener: (context, state) {
-                if (state is ListaPrecioSuccess) {
+                if (state is ServicioSuccess) {
                   toastification.show(
                     context: context,
                     title: Text(state.message),
                     type: ToastificationType.success,
                     autoCloseDuration: const Duration(seconds: 3),
                   );
-                } else if (state is ListaPrecioError) {
+                } else if (state is ServicioError) {
                   toastification.show(
                     context: context,
                     title: Text(state.message),
@@ -102,14 +101,14 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
 
   Widget _buildContent(
     BuildContext context,
-    ListaPrecioState state,
+    ServicioState state,
     ThemeData theme,
   ) {
-    if (state is ListaPrecioLoading) {
+    if (state is ServicioLoading) {
       return _buildLoadingState(theme);
-    } else if (state is ListaPrecioLoaded) {
+    } else if (state is ServicioLoaded) {
       return _buildLoadedState(state, theme, context);
-    } else if (state is ListaPrecioError) {
+    } else if (state is ServicioError) {
       return _buildErrorState(state, theme, context);
     } else {
       return _buildInitialState(theme, context);
@@ -123,7 +122,7 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
         controller: _searchController,
         focusNode: _searchFocusNode,
         decoration: InputDecoration(
-          hintText: 'Buscar por precio, tipo hospedaje, tipo precio...',
+          hintText: 'Buscar por descripción...',
           hintStyle: TextStyle(
             color: theme.colorScheme.onSurface.withOpacity(0.5),
             fontSize: 14,
@@ -142,7 +141,7 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
                   ),
                   onPressed: () {
                     _searchController.clear();
-                    context.read<ListaPrecioBloc>().add(const SearchListaPrecios(''));
+                    context.read<ServicioBloc>().add(const SearchServicios(''));
                     setState(() {});
                   },
                 )
@@ -174,7 +173,7 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
         ),
         style: const TextStyle(fontSize: 14),
         onChanged: (value) {
-          context.read<ListaPrecioBloc>().add(SearchListaPrecios(value));
+          context.read<ServicioBloc>().add(SearchServicios(value));
           setState(() {});
         },
       ),
@@ -200,7 +199,7 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Cargando lista de precios...',
+              'Cargando servicios...',
               style: TextStyle(
                 fontSize: 16,
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
@@ -213,11 +212,11 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
   }
 
   Widget _buildLoadedState(
-    ListaPrecioLoaded state,
+    ServicioLoaded state,
     ThemeData theme,
     BuildContext context,
   ) {
-    if (state.listaPrecios.isEmpty) {
+    if (state.servicios.isEmpty) {
       return Card(
         elevation: 4,
         child: Container(
@@ -231,13 +230,13 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.price_change_outlined,
+                Icons.room_service_outlined,
                 size: 80,
                 color: theme.colorScheme.primary.withOpacity(0.5),
               ),
               const SizedBox(height: 24),
               Text(
-                'No hay listas de precio registradas',
+                'No hay servicios registrados',
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
@@ -245,9 +244,9 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                onPressed: () => CreateListaPrecioDialog.show(context, theme),
+                onPressed: () => CreateServicioDialog.show(context, theme),
                 icon: const Icon(Icons.add),
-                label: const Text('Crear Primera Lista de Precio'),
+                label: const Text('Crear Primer Servicio'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
@@ -292,8 +291,8 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
                         children: [
                           Text(
                             showingFiltered 
-                                ? 'Resultados (${displayList.length} de ${state.listaPrecios.length})'
-                                : 'Lista de Precios (${state.listaPrecios.length})',
+                                ? 'Resultados (${displayList.length} de ${state.servicios.length})'
+                                : 'Servicios (${state.servicios.length})',
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.primary,
@@ -311,7 +310,7 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
                       ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () => CreateListaPrecioDialog.show(context, theme),
+                      onPressed: () => CreateServicioDialog.show(context, theme),
                       icon: const Icon(Icons.add, size: 18),
                       label: const Text('Nuevo'),
                       style: ElevatedButton.styleFrom(
@@ -333,7 +332,7 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
-                context.read<ListaPrecioBloc>().add(const LoadListaPrecios());
+                context.read<ServicioBloc>().add(const LoadServicios());
                 // Esperar un poco para que se complete la carga
                 await Future.delayed(const Duration(milliseconds: 500));
               },
@@ -346,8 +345,8 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
                       itemCount: displayList.length,
                       separatorBuilder: (context, index) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
-                        final listaPrecio = displayList[index];
-                        return _buildListaPrecioCard(listaPrecio, theme, context);
+                        final servicio = displayList[index];
+                        return _buildServicioCard(servicio, theme, context);
                       },
                     ),
             ),
@@ -392,8 +391,8 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
     );
   }
 
-  Widget _buildListaPrecioCard(
-    dynamic listaPrecio,
+  Widget _buildServicioCard(
+    dynamic servicio,
     ThemeData theme,
     BuildContext context,
   ) {
@@ -424,68 +423,81 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '\$${listaPrecio.valor.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}',
-                      style: theme.textTheme.headlineSmall
-                      ?.copyWith(
+                      servicio.descripcion,
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    if (listaPrecio.tipoHospedaje != null) ...[
-                      Text(
-                        'Tipo Hospedaje: ${listaPrecio.tipoHospedaje!.descripcion}',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.monetization_on,
+                          size: 16,
+                          color: Colors.green[600],
                         ),
-                      ),
-                      Text(
-                        listaPrecio.tipoHospedaje!.equipamiento,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        const SizedBox(width: 4),
+                        Text(
+                          '\$${servicio.valorReferencial.toString()}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green[600],
+                          ),
                         ),
+                      ],
+                    ),
+                    if (servicio.observacion.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 16,
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              servicio.observacion,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                    const SizedBox(height: 8),
-                    if (listaPrecio.tipoPrecio != null) ...[
-                      Text(
-                        'Tipo Precio: ${listaPrecio.tipoPrecio!.descripcion}',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'ID: ${servicio.idServicio}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
                       ),
-                      Text(
-                        listaPrecio.tipoPrecio!.observacion,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                    Text('id: ${listaPrecio.idListaPrecio}'),
+                    ),
                   ],
                 ),
               ),
               Column(
                 children: [
                   IconButton(
-                    onPressed: () => EditListaPrecioDialog.show(
+                    onPressed: () => EditServicioDialog.show(
                       context,
                       theme,
-                      listaPrecio,
+                      servicio,
                     ),
                     icon: Icon(Icons.edit, color: Colors.blue[600]),
                     tooltip: 'Editar',
                   ),
                   IconButton(
-                    onPressed: () => DeleteListaPrecioDialog.show(
+                    onPressed: () => DeleteServicioDialog.show(
                       context,
                       theme,
-                      listaPrecio,
+                      servicio,
                     ),
-                    icon: Icon(
-                      Icons.delete,
-                      color: Colors.red[600],
-                    ),
+                    icon: Icon(Icons.delete, color: Colors.red[600]),
                     tooltip: 'Eliminar',
                   ),
                 ],
@@ -498,14 +510,14 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
   }
 
   Widget _buildErrorState(
-    ListaPrecioError state,
+    ServicioError state,
     ThemeData theme,
     BuildContext context,
   ) {
-    return ErrorStateWidget.listaPrecios(
+    return ErrorStateWidget.servicios(
       message: state.message,
       onRetry: () {
-        context.read<ListaPrecioBloc>().add(const LoadListaPrecios());
+        context.read<ServicioBloc>().add(const LoadServicios());
       },
     );
   }
@@ -524,13 +536,13 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.price_change_outlined,
+              Icons.room_service_outlined,
               size: 80,
               color: theme.colorScheme.primary.withOpacity(0.5),
             ),
             const SizedBox(height: 24),
             Text(
-              'Lista de Precios',
+              'Servicios',
               style: theme.textTheme.titleLarge?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -539,7 +551,7 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Gestiona los precios de los diferentes tipos de hospedaje.',
+              'Gestiona los servicios de tu sistema de reservas.',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -548,10 +560,10 @@ class _ListaPrecioPageState extends State<ListaPrecioPage> {
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () {
-                context.read<ListaPrecioBloc>().add(const LoadListaPrecios());
+                context.read<ServicioBloc>().add(const LoadServicios());
               },
               icon: const Icon(Icons.refresh),
-              label: const Text('Cargar Lista de Precios'),
+              label: const Text('Cargar Servicios'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,

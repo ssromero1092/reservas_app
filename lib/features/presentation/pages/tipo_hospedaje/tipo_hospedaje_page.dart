@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:reservas_app/core/constants/app_routes.dart';
 import 'package:reservas_app/core/constants/k_padding.dart';
 import 'package:reservas_app/features/presentation/blocs/tipo_hospedaje/tipo_hospedaje_bloc.dart';
 import 'package:reservas_app/features/presentation/pages/tipo_hospedaje/widgets/tipo_hospedaje_create_form.dart';
@@ -52,7 +53,7 @@ class _TipoHospedajePageState extends State<TipoHospedajePage> {
         elevation: 8,
         actions: [
           IconButton(
-            onPressed: () => context.go('/home'),
+            onPressed: () => context.go(AppRoutes.home),
             icon: const Icon(Icons.home),
             tooltip: 'Ir al inicio',
           ),

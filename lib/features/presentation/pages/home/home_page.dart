@@ -415,7 +415,7 @@ class HomePage extends StatelessWidget {
                       title: 'Servicio',
                       subtitle: 'Gestión de Servicios',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.push('/categorias'),
+                      onTap: () => context.push('/servicios'),
                     ),
                     _buildMasterOption(
                       context,

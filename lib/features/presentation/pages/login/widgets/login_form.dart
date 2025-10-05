@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:reservas_app/core/constants/app_routes.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
 import 'package:toastification/toastification.dart';
@@ -82,7 +83,7 @@ class _LoginFormState extends State<LoginForm> {
                 dbname: 'dbname', // Este valor debería venir del estado
               ));
               
-              context.pushReplacement('/home');
+              context.pushReplacement(AppRoutes.home);
             } else if (state.status == LoginStatus.failure) {
               toastification.show(
                 context: context,
