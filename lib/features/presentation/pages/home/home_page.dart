@@ -423,7 +423,7 @@ class HomePage extends StatelessWidget {
                       title: 'Cliente',
                       subtitle: 'Gestión de Clientes',
                       color: Colors.blueGrey[600]!,
-                      onTap: () => context.push('/categorias'),
+                      onTap: () => context.push('/clientes'),
                     ),
                   ],
                 ),

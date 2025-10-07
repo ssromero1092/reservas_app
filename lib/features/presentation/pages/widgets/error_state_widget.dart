@@ -96,6 +96,22 @@ class ErrorStateWidget extends StatelessWidget {
     );
   }
 
+  /// Factory constructor específico para errores de carga de clientes
+  factory ErrorStateWidget.clientes({
+    required String message,
+    required VoidCallback onRetry,
+  }) {
+    return ErrorStateWidget(
+      title: 'Error al Cargar Clientes',
+      message: message,
+      icon: Icons.people_outline,
+      buttonText: 'Reintentar',
+      onRetry: onRetry,
+      backgroundColor: Colors.red[50],
+      iconColor: Colors.red[400],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

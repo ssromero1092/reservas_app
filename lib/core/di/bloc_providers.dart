@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/lista_precio/lista_precio_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
@@ -39,6 +40,9 @@ class BlocProviders {
     ),
     BlocProvider<ServicioBloc>(
       create: (context) => GetIt.instance.get<ServicioBloc>(),
+    ),
+    BlocProvider<ClienteBloc>(
+      create: (context) => GetIt.instance.get<ClienteBloc>(),
     ),
   ];
 }

@@ -6,6 +6,7 @@ import 'package:reservas_app/core/network/dio_client.dart';
 import 'package:reservas_app/core/storage/secure_storage.dart';
 import 'package:reservas_app/core/storage/shared_preferences.dart';
 import 'package:reservas_app/features/data/datasources/auth_remote_data_source.dart';
+import 'package:reservas_app/features/data/datasources/cliente_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/habitacion_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/lista_precio_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/recinto_remote_data_source.dart';
@@ -14,6 +15,7 @@ import 'package:reservas_app/features/data/datasources/servicio_remote_data_sour
 import 'package:reservas_app/features/data/datasources/tipo_hospedaje_remote_data_source.dart';
 import 'package:reservas_app/features/data/datasources/tipo_precio_remote_data_source.dart';
 import 'package:reservas_app/features/data/repositories/auth_repository_impl.dart';
+import 'package:reservas_app/features/data/repositories/cliente_repository_imp.dart';
 import 'package:reservas_app/features/data/repositories/habitacion_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/lista_precio_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/recinto_repository_impl.dart';
@@ -22,6 +24,7 @@ import 'package:reservas_app/features/data/repositories/servicio_repository_impl
 import 'package:reservas_app/features/data/repositories/tipo_hospedaje_repository_impl.dart';
 import 'package:reservas_app/features/data/repositories/tipo_precio_repository_impl.dart';
 import 'package:reservas_app/features/domain/repositories/auth_repository.dart';
+import 'package:reservas_app/features/domain/repositories/cliente_repository.dart';
 import 'package:reservas_app/features/domain/repositories/habitacion_repository.dart';
 import 'package:reservas_app/features/domain/repositories/lista_precio_repository.dart';
 import 'package:reservas_app/features/domain/repositories/recinto_repository.dart';
@@ -29,6 +32,10 @@ import 'package:reservas_app/features/domain/repositories/reservas_repository.da
 import 'package:reservas_app/features/domain/repositories/servicio_repository.dart';
 import 'package:reservas_app/features/domain/repositories/tipo_hospedaje_repository.dart';
 import 'package:reservas_app/features/domain/repositories/tipo_precio_repository.dart';
+import 'package:reservas_app/features/domain/usecases/cliente_usecases/create_cliente_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/cliente_usecases/delete_cliente_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/cliente_usecases/get_cliente_usecase.dart';
+import 'package:reservas_app/features/domain/usecases/cliente_usecases/update_cliente_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/create_habitacion_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/delete_habitacion_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/habitacion_usecases/get_habitacion_usecase.dart';
@@ -56,6 +63,7 @@ import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/delet
 import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/get_tipo_precio_usecase.dart';
 import 'package:reservas_app/features/domain/usecases/tipo_precio_usecases/update_tipo_precio_usecase.dart';
 import 'package:reservas_app/features/presentation/blocs/auth/auth_bloc.dart';
+import 'package:reservas_app/features/presentation/blocs/cliente/cliente_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/habitacion/habitacion_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/lista_precio/lista_precio_bloc.dart';
 import 'package:reservas_app/features/presentation/blocs/login/login_bloc.dart';
@@ -122,6 +130,9 @@ Future<void> init() async {
   di.registerLazySingleton<ServicioRemoteDataSource>(
     () => ServicioRemoteDataSourceImpl(dioClient: di()),
   );
+  di.registerLazySingleton<ClienteRemoteDataSource>(
+    () => ClienteRemoteDataSourceImpl(dioClient: di()),
+  );
 
   // Repositories
   di.registerLazySingleton<AuthRepository>(
@@ -155,7 +166,9 @@ Future<void> init() async {
   di.registerLazySingleton<ServicioRepository>(
     () => ServicioRepositoryImpl(remoteDataSource: di()),
   );
-  
+  di.registerLazySingleton<ClienteRepository>(
+    () => ClienteRepositoryImpl(remoteDataSource: di()),
+  ); 
 
   // Use Cases
   di.registerLazySingleton<LoginUseCase>(() => LoginUseCase(repository: di()));
@@ -247,6 +260,20 @@ Future<void> init() async {
     () => DeleteServicioUseCase(servicioRepository: di()),
   );
 
+  // Cliente Use Cases
+  di.registerLazySingleton<GetClientesUseCase>(
+    () => GetClientesUseCase(clienteRepository: di()),
+  );
+  di.registerLazySingleton<CreateClienteUseCase>(
+    () => CreateClienteUseCase(clienteRepository: di()),
+  );
+  di.registerLazySingleton<UpdateClienteUseCase>(
+    () => UpdateClienteUseCase(clienteRepository: di()),
+  );
+  di.registerLazySingleton<DeleteClienteUseCase>(
+    () => DeleteClienteUseCase(clienteRepository: di()),
+  );
+
   // Blocs
   di.registerFactory<AuthBloc>(
     () => AuthBloc(
@@ -318,6 +345,15 @@ Future<void> init() async {
       createServicioUseCase: di(),
       updateServicioUseCase: di(),
       deleteServicioUseCase: di(),
+    ),
+  );
+
+  di.registerFactory<ClienteBloc>(
+    () => ClienteBloc(
+      getClientesUseCase: di(),
+      createClienteUseCase: di(),
+      updateClienteUseCase: di(),
+      deleteClienteUseCase: di(),
     ),
   );
 }

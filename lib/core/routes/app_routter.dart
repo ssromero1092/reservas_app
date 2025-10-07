@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservas_app/core/widgets/animation_app_router.dart';
+import 'package:reservas_app/features/presentation/pages/cliente/cliente_page.dart';
 import 'package:reservas_app/features/presentation/pages/habitaciones/habitacion_page.dart';
 import 'package:reservas_app/features/presentation/pages/home/home_page.dart';
 import 'package:reservas_app/features/presentation/pages/lista_precio/lista_precio_page.dart';
@@ -96,6 +97,13 @@ class AppRouter {
         name: 'listas-precio',
         pageBuilder: (context, state) {
           return AppAnimationTransitions.morphingPortalTransition(const ListaPrecioPage(), state);
+        },
+      ),
+      GoRoute(
+        path: '/clientes',
+        name: 'clientes',
+        pageBuilder: (context, state) {
+          return AppAnimationTransitions.morphingPortalTransition(const ClientePage(), state);
         },
       ),
     ],
